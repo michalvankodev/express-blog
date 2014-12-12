@@ -5,9 +5,17 @@ var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var nodemon = require('gulp-nodemon');
 var livereload = require('gulp-livereload');
+var less = require('gulp-less');
+var concat = require('gulp-concat');
+var path = require('path');
+var rename = require('gulp-rename');
+var clean = require('gulp-clean');
 
 var SOURCE = {
-  CLIENT : './client/**/!(*.spec|*.mock).js',
+  CLIENT : {
+    js: './client/**/!(*.spec|*.mock).js',
+    less: './client/**/*.less'
+  },
   SERVER : './server/**/!(*.spec).js',
   STATIC : './client/**/*(*.html|*.css)',
 
@@ -19,19 +27,30 @@ var SOURCE = {
 
 
 gulp.task('lint', function() {
-  return gulp.src([SOURCE.CLIENT, SOURCE.SERVER])
+  return gulp.src([SOURCE.CLIENT.js, SOURCE.SERVER])
     .pipe(jshint())
     .pipe(jshint.reporter(stylish));
 });
 
 gulp.task('watch', function() {
   livereload.listen();
-  gulp.watch([SOURCE.CLIENT, SOURCE.STATIC], ['reload']);
+  gulp.watch([SOURCE.CLIENT.js, SOURCE.STATIC], ['reload']);
 });
 
 gulp.task('reload', function() {
   livereload.changed();
 });
+
+gulp.task('less', function() {
+  return gulp.src(SOURCE.CLIENT.less)
+    .pipe(less())
+    .pipe(rename(function(path) {
+      path.dirname = '';
+    }))
+    .pipe(gulp.dest('./client/generated/css'));
+})
+
+//TODO INJECT CSS JS
 
 /** Main development task */
 gulp.task('serve', ['lint', 'watch'], function() {
