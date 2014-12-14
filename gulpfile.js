@@ -1,4 +1,6 @@
+// Node modules
 var gulp = require('gulp');
+var del = require('del');
 
 // Plugins
 var jshint = require('gulp-jshint');
@@ -9,9 +11,9 @@ var less = require('gulp-less');
 var concat = require('gulp-concat');
 var path = require('path');
 var rename = require('gulp-rename');
-var clean = require('gulp-clean');
 var inject = require('gulp-inject');
 var order = require('gulp-order');
+var gutil = require('gulp-util');
 
 
 var SOURCE = {
@@ -41,7 +43,7 @@ gulp.task('watch', function() {
 
   gulp.watch([SOURCE.CLIENT.js, SOURCE.STATIC], ['reload'])
     .on('change', function(event) {
-      console.log('File ' + event.path + ' was ' + event.type + ', reloading...');
+      gutil.log('File ' + event.path + ' was ' + event.type + ', reloading...');
     });
 
   // Watch less stylesheets and compile them
@@ -54,14 +56,20 @@ gulp.task('reload', function() {
   livereload.changed('Client');
 });
 
-gulp.task('less', function() {
-  return gulp.src(SOURCE.CLIENT.less)
+// Delete previously generated CSS files
+gulp.task('clean-css', function(cb) {
+  del('./client/generated/css', cb);
+});
+
+gulp.task('less', ['clean-css'], function() {
+  gulp.src(SOURCE.CLIENT.less)
     .pipe(less())
     .pipe(rename(function(path) {
       path.dirname = '';
     }))
     .pipe(gulp.dest('./client/generated/css'));
 });
+
 
 //TODO INJECT CSS JS
 gulp.task('inject', function() {
@@ -79,7 +87,7 @@ gulp.task('inject', function() {
 });
 
 /** Main development task */
-gulp.task('serve', ['lint', 'less', 'inject', 'watch'], function() {
+gulp.task('serve', ['lint', 'less', 'inject'], function() {
   nodemon({ script: SOURCE.APP, env: { 'NODE_ENV': 'development' } , watch: ['server/*'], ext: 'js'})
     .on('start', function() {
       setTimeout(function() {

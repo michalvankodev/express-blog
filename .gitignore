@@ -15,5 +15,5 @@ public
 dist
 /server/config/local.env.js
 
-### Client generated stylesheets and scripts
-client/generated
+### generated stylesheets and scripts
+generated
