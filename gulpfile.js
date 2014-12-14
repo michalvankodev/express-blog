@@ -61,7 +61,7 @@ gulp.task('clean-css', function(cb) {
   del('./client/generated/css', cb);
 });
 
-gulp.task('less', ['clean-css'], function() {
+gulp.task('less', function() {
   return gulp.src(SOURCE.CLIENT.less)
     .pipe(less())
     .pipe(rename(function(path) {
