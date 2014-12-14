@@ -62,7 +62,7 @@ gulp.task('clean-css', function(cb) {
 });
 
 gulp.task('less', ['clean-css'], function() {
-  gulp.src(SOURCE.CLIENT.less)
+  return gulp.src(SOURCE.CLIENT.less)
     .pipe(less())
     .pipe(rename(function(path) {
       path.dirname = '';
@@ -72,7 +72,7 @@ gulp.task('less', ['clean-css'], function() {
 
 
 //TODO INJECT CSS JS
-gulp.task('inject', function() {
+gulp.task('inject', ['less'], function() {
   var sources = gulp.src([SOURCE.CLIENT.css, SOURCE.CLIENT.js], {read: false})
    .pipe(order([
      'client/**/reset.css',
@@ -87,7 +87,7 @@ gulp.task('inject', function() {
 });
 
 /** Main development task */
-gulp.task('serve', ['lint', 'less', 'inject'], function() {
+gulp.task('serve', ['lint', 'inject'], function() {
   nodemon({ script: SOURCE.APP, env: { 'NODE_ENV': 'development' } , watch: ['server/*'], ext: 'js'})
     .on('start', function() {
       setTimeout(function() {
