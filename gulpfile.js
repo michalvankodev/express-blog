@@ -88,10 +88,5 @@ gulp.task('inject', ['less'], function() {
 
 /** Main development task */
 gulp.task('serve', ['lint', 'inject'], function() {
-  nodemon({ script: SOURCE.APP, env: { 'NODE_ENV': 'development' } , watch: ['server/*'], ext: 'js'})
-    .on('start', function() {
-      setTimeout(function() {
-        livereload.changed('Server');
-      }, 2000);
-    });
+  nodemon({ script: SOURCE.APP, env: { 'NODE_ENV': 'development' } , watch: ['server/*'], ext: 'js'});
 });

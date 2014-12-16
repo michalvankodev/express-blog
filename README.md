@@ -10,6 +10,7 @@ This project aims to replace my current wordpress blog.
 - Automatized back-end and front-end testing
 - 100% JavaScript stack
 - Be minimalist as it can
+- Complete seperation of front-end from back-end
 
 ### Prerequisites
 - npm - Node package manager
@@ -29,4 +30,4 @@ This project aims to replace my current wordpress blog.
 - Node (http://nodejs.org/)
 - Express (http://expressjs.com/)
 - MongoDB (http://www.mongodb.org/)
-- Mongoose - Mongo ORM for JavaScript(http://mongoosejs.com/)
+- Mongoose - Mongo ORM for JavaScript (http://mongoosejs.com/)
