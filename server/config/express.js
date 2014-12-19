@@ -38,6 +38,7 @@ module.exports = function(app) {
     app.use(express.static(path.join(config.root, 'client')));
     app.use('/admin', express.static(path.join(config.root, 'admin')));
     app.set('appPath', path.join(config.root, 'client'));
+    app.set('adminPath', path.join(config.root, 'admin'));
     app.use(morgan('dev'));
     app.use(errorHandler()); // Error handler - has to be last
   }

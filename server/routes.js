@@ -19,12 +19,10 @@ module.exports = function(app) {
 
 
   // Admin
-  // app.route('/admin')
-  //   .get(function(req, res){
-  //     // if user is authentificated show him admin site
-  //     console.log(app.get('adminPath'));
-  //     res.sendFile(app.get('adminPath') + '/index.html');
-  //   });
+  app.route('/admin/*')
+    .get(function(req, res){
+      res.sendFile(app.get('adminPath') + '/index.html');
+    });
 
   // All other routes should redirect to the index.html
   app.route('/*')
