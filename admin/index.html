@@ -13,11 +13,9 @@
 </head>
 <body ng-controller="MainController as MainCtrl">
 
-  <md-sidenav md-component-id="main-sidenav" class="md-sidenav-left md-whiteframe-z2" md-is-locked-open="$media('gt-sm')" >
-    <md-toolbar>
-      <h2 class="md-toolbar-tools">express-blog</h2>
-    </md-toolbar>
-  </md-sidenav>
+  <eb-sidebar>
+  </eb-sidebar>
+
   <ui-view name="mainView">
   </ui-view>
 
@@ -35,6 +33,7 @@
 
   <!-- inject:js -->
   <script src="static/js/app.js"></script>
+  <script src="sidebar/sidebarDirective.js"></script>
   <script src="static/js/mainController.js"></script>
   <!-- endinject -->
 </body>
