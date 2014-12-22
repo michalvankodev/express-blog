@@ -53,7 +53,8 @@ gulp.task('watch', function() {
     });
 
   // Watch less stylesheets and compile them
-  gulp.watch(SOURCE.CLIENT.less, ['less']);
+  gulp.watch(SOURCE.CLIENT.less, ['less-client']);
+  gulp.watch(SOURCE.ADMIN.less, ['less-admin']);
 
   livereload.listen();
 });
