@@ -1,10 +1,14 @@
-<section class="login-section" layout="row">
+<section class="login-section md-whiteframe-z1">
   <md-toolbar>
-    <h2>Login</h2>
-  </md-toobar>
-  <md-content>
-    <md-text-float label="Login" ng-model="login"></md-text-float>
-    <md-text-float label="Password" ng-model="password" type="password"></md-text-float>
-    <md-button class="md-primary md-raised">Login</md-button>
-  </md-content>
+    <h2 class="md-toolbar-tools">Login</h2>
+  </md-toolbar>
+  <form>
+    <md-content layout="column" layout-align="center center">
+
+        <md-text-float label="Name" ng-model="login"></md-text-float>
+        <md-text-float label="Password" ng-model="password" type="password"></md-text-float>
+        <md-button class="md-primary md-raised">Log in</md-button>
+
+    </md-content>
+  </form>
 </section>
