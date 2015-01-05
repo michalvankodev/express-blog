@@ -1,13 +1,15 @@
 <md-sidenav
   md-component-id="main-sidenav"
   class="md-sidenav-left md-whiteframe-z2"
-  md-is-locked-open="$media('gt-sm')"
->
+  md-is-locked-open="$media('gt-sm')" >
+
   <md-toolbar>
     <h2 class="md-toolbar-tools">express-blog</h2>
   </md-toolbar>
 
   <md-content class="md-default-theme">
-    <!-- TODO: Make menu items -->
+    <section ng-repeat="section in sections">
+      <md-button>{{section.name}}</md-button>
+    </section>
   </md-content>
 </md-sidenav>

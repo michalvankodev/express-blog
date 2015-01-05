@@ -28,7 +28,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
           templateUrl: 'home/home.html',
           controller: 'HomeController'
         }
-      }
+      },
+      data: { restrictTo: ['admin'] }
     })
     ;
 });
