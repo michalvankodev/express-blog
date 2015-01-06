@@ -27,7 +27,6 @@ app.run(function ($rootScope, $state, User) {
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
     if (!isAllowed(User, toState)) {
       event.preventDefault(); // Prevent going to the next state
-      console.log($state.get('notLoggedIn'));
       $state.go('notLoggedIn');
     }
 

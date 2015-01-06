@@ -1,6 +1,6 @@
 var app = angular.module('blogCms');
 
-app.controller('LoginController', function($scope, $http, $window, $mdToast, $state) {
+app.controller('LoginController', function($scope, $http, $window, $mdToast, $state, User) {
   $scope.inProgress = false;
 
   $scope.authenticate = function authenticate() {
@@ -14,9 +14,11 @@ app.controller('LoginController', function($scope, $http, $window, $mdToast, $st
 
     $http.post('/auth', msg)
       .success(function(data) {
-        console.log(data);
+        // Might remove saving token to the session storage
         $window.sessionStorage.setItem('accessToken', data.token);
-
+        
+        angular.extend(User, data.user);
+        User.accessToken = data.token;
         $state.go('home');
         $scope.inProgress = false;
       })
