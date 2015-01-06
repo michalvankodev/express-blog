@@ -16,9 +16,11 @@ app.controller('LoginController', function($scope, $http, $window, $mdToast, $st
       .success(function(data) {
         // Might remove saving token to the session storage
         $window.sessionStorage.setItem('accessToken', data.token);
-        
+
         angular.extend(User, data.user);
         User.accessToken = data.token;
+
+        User.logged = true;
         $state.go('home');
         $scope.inProgress = false;
       })
