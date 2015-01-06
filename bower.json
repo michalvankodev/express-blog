@@ -1,0 +1,22 @@
+{
+  "name": "express-blog-admin",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mklakakilli/express-blog",
+  "authors": [
+    "Michal Vanko <mklakakilli@gmail.com>"
+  ],
+  "description": "Bower dependencies for administration app of the express-blog",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-material": "master",
+    "angular-ui-router": "~0.2.13"
+  }
+}

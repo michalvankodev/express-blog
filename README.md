@@ -22,6 +22,7 @@ This project aims to replace my current wordpress blog.
 - Angular - 1.3 (https://www.angularjs.org/)
 - UI Router (http://angular-ui.github.io/ui-router/site/#/api/ui.router)
 - Less (http://lesscss.org/)
+- Bower (http://bower.io/)
 
 ##### CMS
 - Angular Material (https://material.angularjs.org/#/)
