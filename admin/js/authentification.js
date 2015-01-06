@@ -10,12 +10,12 @@ var app = angular.module('blogCms');
 
 app.run(function ($rootScope, $state, User) {
 
-  var isAllowed = function isAllowed(user, currentState) {
-    if (currentState.data === 'undefined' || currentState.data.restrictTo === 'undefined') {
+  var isAllowed = function isAllowed(user, state) {
+    if (typeof state.data === 'undefined' || typeof state.data.restrictTo === 'undefined') {
       return true;
     }
 
-    if (currentState.data.restrictTo.indexOf(user.role)) {
+    if (state.data.restrictTo.indexOf(user.role) > -1) {
       return true;
     }
     else {
@@ -26,7 +26,8 @@ app.run(function ($rootScope, $state, User) {
   // Check if user is allowed on every state change
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
     if (!isAllowed(User, toState)) {
-      event.preventDefault();
+      event.preventDefault(); // Prevent going to the next state
+      console.log($state.get('notLoggedIn'));
       $state.go('notLoggedIn');
     }
 
