@@ -7,9 +7,14 @@
     <h2 class="md-toolbar-tools">express-blog</h2>
   </md-toolbar>
 
-  <md-content class="md-default-theme">
+  <md-content class="md-default-theme" layout="column">
     <section ng-repeat="section in sections">
-      <md-button>{{section.name}}</md-button>
+      <md-button class="section-button">{{section.name}}</md-button>
+      <ul ng-if="section.links">
+        <li ng-repeat"link in section.links">
+          {{link.name}}
+        </li>
+      </ul>
     </section>
   </md-content>
 </md-sidenav>

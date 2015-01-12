@@ -6,7 +6,7 @@ app.directive('ebSidebar', function() {
     templateUrl: 'sidebar/sidebar.html',
     controller: function ($scope) {
       $scope.sections = [
-        { name: "Pages", url: '/pages' }
+        { name: "Posts", url: '/posts' }
       ];
 
     }
