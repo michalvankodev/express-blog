@@ -9,12 +9,13 @@ This project aims to replace my current wordpress blog.
 - Source code fully documented
 - Automatized back-end and front-end testing
 - 100% JavaScript stack
-- Be minimalist as it can
-- Complete seperation of front-end from back-end
+- Be minimalist
+- Complete separation of front-end from back-end
 
 ### Prerequisites
-- npm - Node package manager
-- karma - Karma unit test runner (http://karma-runner.github.io)
+- npm - Node package manager (https://www.npmjs.com/)
+- bower - (http://bower.io/)
+- karma - Karma unit test runner (http://karma-runner.github.io/)
 - protractor - Protractor e2e testing framework (http://angular.github.io/protractor/#/)
 - gulp - Streaming build system (http://gulpjs.com/)
 
@@ -32,3 +33,25 @@ This project aims to replace my current wordpress blog.
 - Express (http://expressjs.com/)
 - MongoDB (http://www.mongodb.org/)
 - Mongoose - Mongo ORM for JavaScript (http://mongoosejs.com/)
+
+### Installation
+Clone this repo
+
+    git clone https://github.com/mklakakilli/express-blog.git
+
+Install npm dependencies
+
+    npm install
+
+Install bower dependecies for front-end JavaScript libraries
+
+    bower install
+
+
+### Development runtime
+You can run development instance via gulp
+
+    gulp serve watch
+It will run server and livereload server for development purpose
+
+To get livereload visit (http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-) 
