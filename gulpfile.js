@@ -14,6 +14,7 @@ var rename = require('gulp-rename');
 var inject = require('gulp-inject');
 var order = require('gulp-order');
 var gutil = require('gulp-util');
+var mocha = require('gulp-spawn-mocha');
 
 
 var SOURCE = {
@@ -45,6 +46,18 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter(stylish));
 });
 
+// Test server js files
+gulp.task('test-server', function() {
+  return gulp.src(SOURCE.SERVER_SPEC, {read: false})
+    .pipe(mocha({
+      reporter: 'dot',
+      env: {
+        'NODE_ENV': 'test',
+        'PORT': 9999 
+      }
+    }));
+});
+
 gulp.task('watch', function() {
 
   gulp.watch([SOURCE.CLIENT.js, SOURCE.ADMIN.js, SOURCE.STATIC], ['reload'])
@@ -57,6 +70,8 @@ gulp.task('watch', function() {
   gulp.watch(SOURCE.ADMIN.less, ['less-admin']);
 
   livereload.listen();
+
+  gulp.watch([SOURCE.SERVER, SOURCE.SERVER_SPEC], ['test-server']);
 });
 
 gulp.task('reload', function() {

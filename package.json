@@ -48,11 +48,15 @@
     "gulp-nodemon": "^1.0.4",
     "gulp-order": "^1.1.1",
     "gulp-rename": "^1.2.0",
+    "gulp-spawn-mocha": "^0.5.2",
     "gulp-util": "^3.0.1",
+    "istanbul": "^0.3.5",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.12.31",
     "karma-firefox-launcher": "^0.1.4",
     "karma-mocha": "^0.1.10",
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "should": "^4.6.0",
+    "supertest": "^0.15.0"
   }
 }
