@@ -15,6 +15,7 @@ var inject = require('gulp-inject');
 var order = require('gulp-order');
 var gutil = require('gulp-util');
 var mocha = require('gulp-spawn-mocha');
+var karma = require('karma').server;
 
 
 var SOURCE = {
@@ -53,10 +54,26 @@ gulp.task('test-server', function() {
       reporter: 'dot',
       env: {
         'NODE_ENV': 'test',
-        'PORT': 9999 
+        'PORT': 9999
       }
     }));
 });
+
+// Test client front end js files (Unit tests)
+gulp.task('test-client', function(done){
+  karma.start({
+    configFile: __dirname + '/karma.client.conf.js',
+  }, done);
+});
+
+// Test admin front end js files
+gulp.task('test-admin', function(done){
+  karma.start({
+    configFile: __dirname + '/karma.admin.conf.js',
+  }, done);
+});
+
+gulp.task('test-front', ['test-client', 'test-admin']);
 
 gulp.task('watch', function() {
 
