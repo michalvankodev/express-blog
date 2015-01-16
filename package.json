@@ -37,6 +37,8 @@
     "serve-favicon": "^2.2.0"
   },
   "devDependencies": {
+    "chai": "^1.10.0",
+    "chai-as-promised": "^4.1.1",
     "connect-livereload": "^0.5.2",
     "del": "^1.1.1",
     "gulp": "^3.8.10",
@@ -47,6 +49,7 @@
     "gulp-livereload": "^3.2.0",
     "gulp-nodemon": "^1.0.4",
     "gulp-order": "^1.1.1",
+    "gulp-protractor": "0.0.12",
     "gulp-rename": "^1.2.0",
     "gulp-spawn-mocha": "^0.5.2",
     "gulp-util": "^3.0.1",
