@@ -60,14 +60,14 @@ gulp.task('test-server', function() {
 });
 
 // Test client front end js files (Unit tests)
-gulp.task('test-client', function(done){
+gulp.task('test-client', function(done) {
   karma.start({
     configFile: __dirname + '/karma.client.conf.js',
   }, done);
 });
 
 // Test admin front end js files
-gulp.task('test-admin', function(done){
+gulp.task('test-admin', function(done) {
   karma.start({
     configFile: __dirname + '/karma.admin.conf.js',
   }, done);
@@ -149,7 +149,14 @@ gulp.task('inject-admin', ['less-admin'], function() {
 
 gulp.task('inject', ['inject-client', 'inject-admin']);
 
-/** Main development task */
+/** Serve  */
 gulp.task('serve', ['lint', 'inject'], function() {
   nodemon({ script: SOURCE.APP, env: { 'NODE_ENV': 'development' } , watch: ['server/*'], ext: 'js'});
 });
+
+/**
+ * Run server and watch on save for changes.
+ *
+ * Test after every save in selenium browsers
+ */
+gulp.task('default', ['serve', 'watch', 'test-front']);

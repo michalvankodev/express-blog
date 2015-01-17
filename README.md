@@ -54,4 +54,27 @@ You can run development instance via gulp
     gulp serve watch
 It will run server and livereload server for development purpose
 
-To get livereload visit (http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-) 
+To get livereload visit (http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-)
+
+### Testing
+#### Make a single run of tests
+
+- Karma unit tests
+
+      karma start karma.client.conf.js --single-run
+      karma start karma.admin.conf.js --single-run
+
+- Integration tests
+
+      protractor
+
+- Server tests
+
+      gulp test-server
+
+#### Run tests while development
+To run development server with on save testing of units and server specs.
+
+    gulp default
+
+This command will run server and selenium browsers for testing front-end unit specs and server specs on every save.
