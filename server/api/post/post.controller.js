@@ -2,22 +2,42 @@
 
 var _ = require('lodash');
 var Post = require('./post.model');
+var queryParser = require('../queryparser.js');
 
 // Get list of posts
 exports.index = function(req, res) {
-  Post.find(function (err, posts) {
+
+  var query = Post.find();
+  var parsedQuery = queryParser.parse(req, query);
+
+  parsedQuery.exec(function (err, posts) {
     if(err) { return handleError(res, err); }
     return res.json(200, posts);
   });
+
 };
 
-// Get a single post
+/**
+ * Get a single post
+ *
+ * We can search a post by a seoTitle as well.
+ *
+ */
 exports.show = function(req, res) {
-  Post.findById(req.params.id, function (err, post) {
+
+  var response = function (err, post) {
     if(err) { return handleError(res, err); }
     if(!post) { return res.send(404); }
     return res.json(post);
-  });
+  };
+
+  var identifier = req.params.id;
+  if (isNumeric(identifier)) {
+    Post.findById(identifier, response);
+  } else {
+    Post.findOne({ 'seoTitle' : identifier }, response);
+  }
+
 };
 
 // Creates a new post in the DB.

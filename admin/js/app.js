@@ -31,5 +31,35 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       },
       data: { restrictTo: ['admin'] }
     })
+    .state('posts', {
+      url: '/posts',
+      views: {
+        'mainView': {
+          templateUrl: 'post/index.html',
+          controller: 'PostsController'
+        }
+      },
+      data: { restrictTo: ['admin'] }
+    })
+    .state('posts.post', {
+      url: '/:post',
+      views: {
+        'mainView': {
+          templateUrl: 'post/post.html',
+          controller: 'SinglePostController'
+        }
+      },
+      data: { restrictTo: ['admin'] }
+    })
+    .state('posts.new', {
+      url: '/new',
+      views: {
+        'mainView': {
+          templateUrl: 'post/post.html',
+          controller: 'SinglePostController'
+        }
+      },
+      data: { restrictTo: ['admin'] }
+    })
     ;
 });
