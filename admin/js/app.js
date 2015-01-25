@@ -35,7 +35,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       url: '/posts',
       views: {
         'mainView': {
-          templateUrl: 'post/index.html',
+          templateUrl: 'posts/postsIndex.html',
           controller: 'PostsController'
         }
       },
@@ -45,7 +45,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       url: '/:post',
       views: {
         'mainView': {
-          templateUrl: 'post/post.html',
+          templateUrl: 'posts/post.html',
           controller: 'SinglePostController'
         }
       },
@@ -55,8 +55,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       url: '/new',
       views: {
         'mainView': {
-          templateUrl: 'post/post.html',
-          controller: 'SinglePostController'
+          templateUrl: 'posts/newPost.html',
+          controller: 'NewPostController'
         }
       },
       data: { restrictTo: ['admin'] }

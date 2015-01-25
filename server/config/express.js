@@ -38,7 +38,7 @@ module.exports = function(app) {
     app.use(express.static(path.join(config.root, '.tmp')));
     app.use(express.static(path.join(config.root, 'client')));
     app.use('/bower_components', express.static(path.join(config.root, 'bower_components')));
-
+    app.use('/components', express.static(path.join(config.root, 'components')));
     app.use('/admin', express.static(path.join(config.root, 'admin')));
     app.set('appPath', path.join(config.root, 'client'));
     app.set('adminPath', path.join(config.root, 'admin'));

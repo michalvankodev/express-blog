@@ -51,7 +51,7 @@ gulp.task('lint', function() {
 gulp.task('test-server', function() {
   return gulp.src(SOURCE.SERVER_SPEC, {read: false})
     .pipe(mocha({
-      reporter: 'dot',
+      reporter: 'nyan',
       env: {
         'NODE_ENV': 'test',
         'PORT': 9999

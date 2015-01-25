@@ -9,12 +9,13 @@
 
   <md-content class="md-default-theme" layout="column">
     <section ng-repeat="section in sections">
-      <md-button class="section-button" ui-sref="{{section.state}}">{{section.name}}</md-button>
-      <ul ng-if="section.links">
-        <li ng-repeat="link in section.links" class="section-link">
-          {{link.name}}
-        </li>
-      </ul>
+      <md-button class="section-button" ui-sref="{{section.state}}" ui-sref-active="md-raised">{{section.name}}</md-button>
+      <aside class="section-links" layout="column">
+          <md-button layout-align="center" ui-sref-active="md-primary md-raised" class="link-button" ui-sref="{{link.state}}" ng-repeat="link in section.links">
+            <i class="fa fa-fw" ng-class="link.icon"></i>
+            {{link.name}}
+          </md-button
+      </aside>
     </section>
   </md-content>
 </md-sidenav>

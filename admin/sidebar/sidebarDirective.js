@@ -8,7 +8,7 @@ app.directive('ebSidebar', function() {
       var posts = {
         name: "Posts",
         state: "posts",
-        links: [{ name: "Add new post", state: "posts.new" }]
+        links: [{ name: "New post", state: "posts.new", icon: "fa-file-o" }]
       }
 
       $scope.sections = [posts];
