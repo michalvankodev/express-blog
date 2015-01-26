@@ -2,7 +2,7 @@
 
 var app = angular.module('blogCms');
 
-app.controller('NewPostController', function($scope, $http) {
+app.controller('NewPostController', function($scope, $http, User) {
   $scope.saving = false;
   $scope.post = {};
 
