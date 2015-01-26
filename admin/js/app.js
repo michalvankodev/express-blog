@@ -44,7 +44,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     .state('posts.post', {
       url: '/:post',
       views: {
-        'mainView': {
+        'mainView@': {
           templateUrl: 'posts/post.html',
           controller: 'SinglePostController'
         }
@@ -54,7 +54,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     .state('posts.new', {
       url: '/new',
       views: {
-        'mainView': {
+        'mainView@': {
           templateUrl: 'posts/newPost.html',
           controller: 'NewPostController'
         }

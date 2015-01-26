@@ -1,1 +1,21 @@
-<h1>New Post</h1>
+<h1>Create new Post</h1>
+<md-input-container>
+  <label>Title</label>
+  <input ng-model="title" />
+</md-input-container>
+<div layout="row">
+  <md-input-container>
+    <label>SEO URL</label>
+    <input ng-model="seoTitle" />
+  </md-input-container>
+  <md-checkbox ng-model="seoTitleLock" aria-label="Lock SEO URL">
+    <span ng-hide="seoTitleLock">Lock SEO URL</span>
+    <span ng-show="seoTitleLock">Locked</span>
+  </md-checkbox>
+</div>
+<md-radio-group ng-model="state" layout="row">
+  <md-radio-button value="Draft" aria-label="Draft">Draft</md-radio-button>
+  <md-radio-button value="Published" aria-label="Publish">Publish</md-radio-button>
+</md-radiogroup>
+<div id="editor">
+</div>

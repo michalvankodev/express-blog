@@ -7,7 +7,7 @@ var PostSchema = new Schema({
   title: String,
   seoTitle: String,
   author: Schema.Types.ObjectId,
-  date: { type: Date, default: Date.now },
+  createdDate: { type: Date, default: Date.now },
   lastUpdated: Date,
   body: String,
   comments: [{

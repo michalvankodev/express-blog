@@ -4,9 +4,14 @@
   </md-toolbar>
   <form>
     <md-content layout="column" layout-align="center center">
-
-        <md-text-float label="Name" ng-model="username"></md-text-float>
-        <md-text-float label="Password" ng-model="password" type="password"></md-text-float>
+      <md-input-container>
+        <label>Name</label>
+        <input ng-model="username" />
+      </md-input-container>
+      <md-input-container>
+        <label>Password</label>
+        <input ng-model="password" type="password" />
+      </md-input-container>
         <p ng-bind="errorMessage" ng-show="errorMessage" class="md-warn"></p>
         <md-progress-circular md-mode="indeterminate" ng-show="inProgress"></md-progress-circular>
         <md-button class="md-primary md-raised" ng-click="authenticate()">Log in</md-button>
