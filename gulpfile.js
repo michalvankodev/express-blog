@@ -151,7 +151,13 @@ gulp.task('inject', ['inject-client', 'inject-admin']);
 
 /** Serve  */
 gulp.task('serve', ['lint', 'inject'], function() {
-  nodemon({ script: SOURCE.APP, env: { 'NODE_ENV': 'development' } , watch: ['server/*'], ext: 'js'});
+  nodemon({
+    script: SOURCE.APP,
+    env: { 'NODE_ENV': 'development' },
+    watch: ['server/*'],
+    ext: 'js',
+    nodeArgs: ['--es_staging']
+  });
 });
 
 /**
