@@ -5,7 +5,7 @@
 * Settings for the angular app.
 * In this file you can setup routes and other configuration for the angular app
 */
-var app = angular.module('blogCms', ['ui.router', 'ngMaterial']);
+var app = angular.module('blogCms', ['ui.router', 'ngMaterial', 'ui.tinymce']);
 
 app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
