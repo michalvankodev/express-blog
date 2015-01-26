@@ -1,4 +1,4 @@
-var Post = require('./post.model');
+var Post = require('../post.model');
 
 /**
 * Adds new comment to the post
