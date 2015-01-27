@@ -17,16 +17,21 @@
   <link rel="stylesheet" href="generated/css/sidebar.css">
   <!-- endinject -->
 </head>
-<body ng-controller="MainController as MainCtrl">
+<body ng-controller="MainController as MainCtrl" layout="row">
 
   <eb-sidebar>
   </eb-sidebar>
+  <div role="main" layout="column" layout-fill>
+    <md-toolbar class="top-toolbar" layout="row" layout-align="start center">
+      <i class="fa fa-bars menu-toggler" ng-click="toggleMenu()" hide-gt-sm></i>
+      <h2>{{title}}</h2>
+      <span flex></span>
+      <span>eb</span>
+    </md-toolbar>
 
-  <ui-view name="mainView">
-  </ui-view>
-
-
-
+    <ui-view name="mainView">
+    </ui-view>
+  </div>
 
   <!-- Angular Material Dependencies -->
   <script src="/bower_components/angular/angular.js"></script>
