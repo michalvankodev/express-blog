@@ -16,6 +16,7 @@ var order = require('gulp-order');
 var gutil = require('gulp-util');
 var mocha = require('gulp-spawn-mocha');
 var karma = require('karma').server;
+var traceur = require('gulp-traceur');
 
 
 var SOURCE = {
@@ -26,10 +27,11 @@ var SOURCE = {
     indexHtml: './client/index.html'
   },
   ADMIN : {
-    js: './admin/**/!(*.spec|*.mock).js',
+    js: './admin/!(generated)**/!(*.spec|*.mock).js',
     less: './admin/**/*.less',
     css: './admin/**/*.css',
-    indexHtml: './admin/index.html'
+    indexHtml: './admin/index.html',
+    generatedJs: './admin/generated/js/**/*.js'
   },
   SERVER : './server/**/!(*.spec).js',
   STATIC : './**/*(*.html|*.css)',
@@ -75,12 +77,21 @@ gulp.task('test-admin', function(done) {
 
 gulp.task('test-front', ['test-client', 'test-admin']);
 
+gulp.task('traceur-admin', ['clean-js'], function() {
+  return gulp.src(SOURCE.ADMIN.js)
+    .pipe(traceur())
+    .pipe(gulp.dest('admin/generated/js'))
+});
+
 gulp.task('watch', function() {
 
-  gulp.watch([SOURCE.CLIENT.js, SOURCE.ADMIN.js, SOURCE.STATIC], ['reload'])
+  gulp.watch([SOURCE.CLIENT.js, SOURCE.ADMIN.generatedJs, SOURCE.STATIC], ['reload'])
     .on('change', function(event) {
       gutil.log('File ' + event.path + ' was ' + event.type + ', reloading...');
     });
+
+  // Watch JS files for traceur to transpile them
+  gulp.watch(SOURCE.ADMIN.js, ['traceur-admin']);
 
   // Watch less stylesheets and compile them
   gulp.watch(SOURCE.CLIENT.less, ['less-client']);
@@ -98,6 +109,9 @@ gulp.task('reload', function() {
 // Delete previously generated CSS files
 gulp.task('clean-css', function(cb) {
   del('./**/generated/css', cb);
+});
+gulp.task('clean-js', function(cb) {
+  del('./**/generated/js', cb);
 });
 
 gulp.task('less-client', function() {
@@ -133,13 +147,13 @@ gulp.task('inject-client', ['less-client'], function() {
     .pipe(gulp.dest('./client'));
 });
 
-gulp.task('inject-admin', ['less-admin'], function() {
-  var sources = gulp.src([SOURCE.ADMIN.css, SOURCE.ADMIN.js], {read: false})
+gulp.task('inject-admin', ['less-admin', 'traceur-admin'], function() {
+  var sources = gulp.src([SOURCE.ADMIN.css, SOURCE.ADMIN.generatedJs], {read: false})
     .pipe(order([
       'admin/**/main.css',
       'admin/**/*.css',
-      'admin/**/app.js',
-      'admin/**/*.js'
+      'admin/generated/js/**/app.js',
+      'admin/generated/js/**/*.js'
     ], {base: '.'}));
 
   return gulp.src(SOURCE.ADMIN.indexHtml)

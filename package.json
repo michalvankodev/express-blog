@@ -52,6 +52,7 @@
     "gulp-protractor": "0.0.12",
     "gulp-rename": "^1.2.0",
     "gulp-spawn-mocha": "^0.5.2",
+    "gulp-traceur": "^0.15.0",
     "gulp-util": "^3.0.1",
     "istanbul": "^0.3.5",
     "jshint-stylish": "^1.0.0",
