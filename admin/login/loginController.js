@@ -15,7 +15,7 @@ app.controller('LoginController', function($scope, $http, $window, $mdToast, $st
     $http.post('/auth', msg)
       .success(function(data) {
         // Might remove saving token to the session storage
-        $window.sessionStorage.setItem('accessToken', data.token);
+        $http.defaults.headers.common.authorization = 'Bearer ' + data.token;
 
         angular.extend(User, data.user);
         User.accessToken = data.token;

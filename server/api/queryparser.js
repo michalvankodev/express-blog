@@ -1,27 +1,30 @@
 'use strict';
 
-/*
-This function should be common for all api call calls.
-Most usefull for index calls and used to limit the output.
+var _ = require('lodash');
 
-Parses the GET query and adds parameters to the mongoose query
-returns back the mongoose query
-*/
-exports.parse = function(req, query) {
+/**
+ * Get conditions object from query for Mongoose.Model.find()
+ *
+ * @param
+ * @returns
+ */
+exports.getConditions = function(query, options) {
+  var conditions = query.q || {};
 
-  // if query has a limit make a limit
-  if (!isNaN(req.query['limit'])) {
-    query.limit(+req.query['limit']);
-  }
-  
-  /*
-  Uses mongoose syntax so to make a DESC just add - infront of the parameter
-  Ex. http://localhost:8090/api/artists?orderBy=-created&limit=2
-  */
-  if (typeof req.query['orderBy'] !== 'undefined') {
-    console.log(req.query['orderBy']);
-    query.sort(req.query['orderBy']);
-  }
+  return _.defaults(conditions, options);
+};
 
-  return query;
+/**
+ * Returns object of options for Mongoose.Model.find() from query
+ *
+ * @see http://mongoosejs.com/docs/api.html#query_Query-setOptions
+ * @param
+ * @returns
+ */
+exports.getOptions = function(query, options) {
+  // Select options from query
+  var selectedOptions = _.pick(query, ['sort', 'limit', 'skip']);
+
+  // Return selected options from query. Set defaults
+  return _.defaults(selectedOptions, options);
 };

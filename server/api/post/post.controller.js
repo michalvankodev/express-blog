@@ -2,17 +2,29 @@
 
 var _ = require('lodash');
 var Post = require('./post.model');
-var queryParser = require('../queryparser.js');
+var QueryParser = require('../queryparser.js');
 
 // Get list of posts
 exports.index = function(req, res) {
 
-  var query = Post.find();
-  var parsedQuery = queryParser.parse(req, query);
+  var defaultConditions = {
+    state : 'Published'
+  };
 
-  parsedQuery.exec(function (err, posts) {
+  var defaultOptions = {
+    limit : 10,
+    sort: 'createdDate',
+  };
+
+  var conditions = QueryParser.getConditions(req.query, defaultConditions);
+  var options = QueryParser.getOptions(req.query, defaultOptions);
+
+  // future debuggin
+  //console.log(conditions, options);
+
+  Post.find(conditions, null, options, function (err, posts) {
     if(err) { return handleError(res, err); }
-    return res.json(200, posts);
+    return res.status(200).json(posts);
   });
 
 };
