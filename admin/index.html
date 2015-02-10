@@ -24,7 +24,7 @@
   <div role="main" layout="column" layout-fill>
     <md-toolbar class="top-toolbar" layout="row" layout-align="start center">
       <i class="fa fa-bars menu-toggler" ng-click="toggleMenu()" hide-gt-sm></i>
-      <h2>{{title}}</h2>
+      <h1>{{AppService.title}}</h1>
       <span flex></span>
       <span>eb</span>
     </md-toolbar>
@@ -47,10 +47,13 @@
   <script src="/bower_components/tinymce/tinymce.min.js"></script>
   <script src="/bower_components/angular-ui-tinymce/src/tinymce.js"></script>
 
+  <script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
+
 
   <!-- inject:js -->
   <script src="generated/js/js/app.js"></script>
   <script src="generated/js/home/homeController.js"></script>
+  <script src="generated/js/js/appService.js"></script>
   <script src="generated/js/js/authentification.js"></script>
   <script src="generated/js/js/mainController.js"></script>
   <script src="generated/js/login/loginController.js"></script>
