@@ -39,7 +39,7 @@ exports.show = function(req, res) {
 
   var response = function (err, post) {
     if(err) { return handleError(res, err); }
-    if(!post) { return res.send(404); }
+    if(!post) { return res.status(404); }
     return res.json(post);
   };
 
@@ -56,7 +56,7 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   Post.create(req.body, function(err, post) {
     if(err) { return handleError(res, err); }
-    return res.json(201, post);
+    return res.status(201).json(post);
   });
 };
 
@@ -69,7 +69,7 @@ exports.update = function(req, res) {
     var updated = _.merge(post, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.json(200, post);
+      return res.status(200).json(post);
     });
   });
 };
@@ -85,6 +85,24 @@ exports.destroy = function(req, res) {
     });
   });
 };
+
+/**
+* Adds new comment to the post
+*/
+exports.comment = function (req, res, next) {
+  var postId = req.params.id;
+  var comment = req.body.comment;
+  comment.date = Date.now();
+
+  Post.findById(req.params.id, function(error, post) {
+    if(err) { return handleError(res, err); }
+    if(!post) { return res.status(404).json({ message: 'Post does not exist'}); }
+    post.comments.push(comment);
+    post.save();
+    return res.status(200).json(comment);
+  });
+};
+
 
 function handleError(res, err) {
   return res.send(500, err);

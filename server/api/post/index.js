@@ -9,10 +9,10 @@ router.get('/', controller.index);
 router.get('/:id', controller.show); // This can be a seoTitle as well
 router.post('/', auth.hasRole('admin'), controller.create);
 router.put('/:id', auth.hasRole('admin'), controller.update);
-router.patch('/:id', controller.update);
+router.patch('/:id', auth.hasRole('admin'), controller.update);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
 // Comments
-router.use('/comment', require('./comment'));
+router.post('/:id/comment', controller.comment);
 
 module.exports = router;
