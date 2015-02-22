@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var Post = require('./post.model');
 var QueryParser = require('../queryparser.js');
+var isNumeric = require('isnumeric');
 
 // Get list of posts
 exports.index = function(req, res) {
@@ -103,7 +104,10 @@ exports.comment = function (req, res, next) {
   });
 };
 
+Post.on('error', function(err) {
+  return err;
+});
 
 function handleError(res, err) {
-  return res.send(500, err);
+  return res.status(500).json(err);
 }

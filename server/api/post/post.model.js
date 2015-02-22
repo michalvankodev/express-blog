@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var PostSchema = new Schema({
-  title: String,
-  seoTitle: String,
+  title: { type: String, required: 'Title is required' },
+  seoTitle: { type: String, unique: true },
   author: { type: Schema.Types.ObjectId, ref: 'User' },
   createdDate: { type: Date, default: Date.now },
   lastUpdated: Date,

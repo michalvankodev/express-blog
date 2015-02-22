@@ -3,6 +3,7 @@
 var should = require('should');
 var app = require('../../app');
 var request = require('supertest');
+var _ = require('lodash');
 var Post = require('./post.model.js');
 var User = require('../user/user.model');
 
@@ -14,7 +15,7 @@ var user = new User({
 });
 var userToken;
 
-describe('GET /api/posts', function() {
+describe('Post API', function() {
   before(function(done) {
     // Clear users before testing
     // Create an admin
@@ -26,7 +27,6 @@ describe('GET /api/posts', function() {
           'username' : user.username,
           'password' : user.password
         };
-        debugger;
         request(app)
           .post('/auth')
           .send(credentials)
@@ -61,7 +61,7 @@ describe('GET /api/posts', function() {
     state: 'Published'
   };
 
-  it('should add post to the database', function(done) {
+  it('should add new post to the database', function(done) {
     request(app)
       .post('/api/posts')
       .set('authorization', 'Bearer ' + userToken)
@@ -77,11 +77,57 @@ describe('GET /api/posts', function() {
     }
   });
 
-  it('should not add post with the same seoTitle to the database');
+  it('should not add post with the same seoTitle to the database', function(done) {
+    // Add first post. Should be able to add
+    request(app)
+      .post('/api/posts')
+      .set('authorization', 'Bearer ' + userToken)
+      .send(newPost)
+      .expect('Content-Type', /json/)
+      .expect(201, addSecond);
 
-  it('should reject post without a title');
+    function addSecond() {
+      request(app)
+        .post('/api/posts')
+        .set('authorization', 'Bearer ' + userToken)
+        .send(newPost) // Same post
+        .expect(500, done); // Server Error
+    };
 
-  it('should respond with the post');
+  });
+
+  it('should reject post without a title', function(done) {
+    var postWithoutTitle = _.clone(newPost);
+    postWithoutTitle.title = '';
+    // Try to add the post
+    request(app)
+      .post('/api/posts')
+      .set('authorization', 'Bearer ' + userToken)
+      .send(postWithoutTitle)
+      .expect(500, done);
+  });
+
+  it('should respond with the post', function (done) {
+    // Add post. Should be able to add
+    request(app)
+      .post('/api/posts')
+      .set('authorization', 'Bearer ' + userToken)
+      .send(newPost)
+      .expect('Content-Type', /json/)
+      .expect(201, getPost);
+
+    function getPost() {
+      request(app)
+        .get('/api/posts/' + newPost.seoTitle)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.should.be.json;
+          done();
+        });
+    }
+  });
 
   it('should be able to write a comment');
 
