@@ -6,7 +6,12 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['mocha'],
 
-    browsers: ['Firefox']
+    browsers: ['Firefox'],
 
+    preprocessors: {
+      'src/**/*.js': ['babel'],
+      'test/**/*.js': ['babel']
+    }
+    
   });
 };

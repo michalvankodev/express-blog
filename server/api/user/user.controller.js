@@ -8,6 +8,8 @@ var validationError = function(res, err) {
   return res.json(422, err);
 };
 
+User.on('error', err => err);
+
 /**
  * Get list of users
  * restriction: 'admin'

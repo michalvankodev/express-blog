@@ -19,7 +19,12 @@ module.exports = function(config) {
       // Include main app.js first
       'admin/js/app.js',
       'admin/**/*.js'
-    ]
+    ],
+
+    preprocessors: {
+      'admin/js/app.js': ['babel'],
+      'admin/**/*.js': ['babel']
+    }
 
   });
 };

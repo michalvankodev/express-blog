@@ -16,7 +16,7 @@ var order = require('gulp-order');
 var gutil = require('gulp-util');
 var mocha = require('gulp-spawn-mocha');
 var karma = require('karma').server;
-var traceur = require('gulp-traceur');
+var babel = require('gulp-babel');
 
 
 var SOURCE = {
@@ -54,6 +54,7 @@ gulp.task('test-server', function() {
   return gulp.src(SOURCE.SERVER_SPEC, {read: false})
     .pipe(mocha({
       reporter: 'nyan',
+      compilers: 'js:babel/register',
       env: {
         'NODE_ENV': 'test',
         'PORT': 9999
@@ -77,9 +78,9 @@ gulp.task('test-admin', function(done) {
 
 gulp.task('test-front', ['test-client', 'test-admin']);
 
-gulp.task('traceur-admin', ['clean-js'], function() {
+gulp.task('babel-admin', ['clean-js'], function() {
   return gulp.src(SOURCE.ADMIN.js)
-    .pipe(traceur())
+    .pipe(babel())
     .pipe(gulp.dest('admin/generated/js'))
 });
 
@@ -147,7 +148,7 @@ gulp.task('inject-client', ['less-client'], function() {
     .pipe(gulp.dest('./client'));
 });
 
-gulp.task('inject-admin', ['less-admin', 'traceur-admin'], function() {
+gulp.task('inject-admin', ['less-admin', 'babel-admin'], function() {
   var sources = gulp.src([SOURCE.ADMIN.css, SOURCE.ADMIN.generatedJs], {read: false})
     .pipe(order([
       'admin/**/main.css',
