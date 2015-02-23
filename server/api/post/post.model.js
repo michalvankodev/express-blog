@@ -11,9 +11,9 @@ var PostSchema = new Schema({
   lastUpdated: Date,
   body: String,
   comments: [{
-    body: String,
+    body: { type: String, required: 'Comment body is required' },
     author: {
-      name: String,
+      name: { type: String, required: 'Author of the comment is required. (missing name)' },
       email: String,
     },
     date: Date,

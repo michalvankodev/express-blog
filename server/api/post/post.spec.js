@@ -92,7 +92,7 @@ describe('Post API', function() {
         .set('authorization', 'Bearer ' + userToken)
         .send(newPost) // Same post
         .expect(500, done); // Server Error
-    };
+    }
 
   });
 
@@ -142,19 +142,14 @@ describe('Post API', function() {
           name: 'Tester',
           email: 'testing@awesome.com'
         },
-        date: Date.now(),
         isReply: false
       };
 
       request(app)
-        .post('/api/posts/' + postSeoTitle)
+        .post('/api/posts/' + postSeoTitle + '/comment')
         .send(comment)
         .expect('Content-Type', /json/)
-        .expect(201)
-        .end((err, res) => {
-          console.log(err);
-          done();
-        });
+        .expect(201, done);
     }
   });
 

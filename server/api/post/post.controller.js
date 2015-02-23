@@ -5,6 +5,20 @@ var Post = require('./post.model');
 var QueryParser = require('../queryparser.js');
 var isNumeric = require('isnumeric');
 
+/**
+ * Get single post by a query
+ *
+ * @param {string|int} query - seoTitle or id of the post
+ * @returns Post.query
+ */
+function singlePostQuery(query) {
+  if (isNumeric(query)) {
+    return Post.findById(query);
+  } else {
+    return Post.findOne({ 'seoTitle' : query });
+  }
+}
+
 // Get list of posts
 exports.index = function(req, res) {
 
@@ -44,26 +58,20 @@ exports.show = function(req, res) {
     return res.json(post);
   };
 
-  var identifier = req.params.id;
-  if (isNumeric(identifier)) {
-    Post.findById(identifier, response);
-  } else {
-    Post.findOne({ 'seoTitle' : identifier }, response);
-  }
-
+  singlePostQuery(req.params.id).exec(response);
 };
 
 // Creates a new post in the DB.
 exports.create = function(req, res) {
   Post.create(req.body, function(err, post) {
-    if(err) { return handleError(res, err); }
+    if (err) { return handleError(res, err); }
     return res.status(201).json(post);
   });
 };
 
 // Updates an existing post in the DB.
 exports.update = function(req, res) {
-  if(req.body._id) { delete req.body._id; }
+  if (req.body._id) { delete req.body._id; }
   Post.findById(req.params.id, function (err, post) {
     if (err) { return handleError(res, err); }
     if(!post) { return res.send(404); }
@@ -90,17 +98,16 @@ exports.destroy = function(req, res) {
 /**
 * Adds new comment to the post
 */
-exports.comment = function (req, res, next) {
-  var postId = req.params.id;
-  var comment = req.body.comment;
+exports.comment = function (req, res) {
+  var comment = req.body;
   comment.date = Date.now();
 
-  Post.findById(req.params.id, function(error, post) {
-    if(err) { return handleError(res, err); }
-    if(!post) { return res.status(404).json({ message: 'Post does not exist'}); }
+  singlePostQuery(req.params.id).exec((err, post) => {
+    if (err) { return handleError(res, err); }
+    if (!post) { return res.status(404).json({ message: 'Post does not exist'}); }
     post.comments.push(comment);
     post.save();
-    return res.status(201).json(comment);
+    return res.status(201).json(post);
   });
 };
 
