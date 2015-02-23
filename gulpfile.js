@@ -171,10 +171,12 @@ gulp.task('serve', ['lint', 'inject'], function() {
     env: { 'NODE_ENV': 'development' },
     watch: ['server/*'],
     ext: 'js',
-    nodeArgs: ['--es_staging']
+    nodeArgs: [''],
+    execMap: {
+      'js' : 'babel-node'
+    }
   });
 });
-
 /**
  * Run server and watch on save for changes.
  *

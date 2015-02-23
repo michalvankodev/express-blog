@@ -121,7 +121,7 @@ describe('Post API', function() {
         .get('/api/posts/' + newPost.seoTitle)
         .expect(200)
         .expect('Content-Type', /json/)
-        .end(function(err, res) {
+        .end((err, res) => {
           if (err) return done(err);
           res.body.should.be.json;
           done();
@@ -129,7 +129,34 @@ describe('Post API', function() {
     }
   });
 
-  it('should be able to write a comment');
+  it('should be able to post a comment', done => {
+    Post.create(newPost, (err, post) => {
+      if (err) { throw err.message; }
+      postComent(post.seoTitle);
+    });
+
+    function postComent(postSeoTitle) {
+      var comment = {
+        body: 'Hey, Tests are awesome',
+        author: {
+          name: 'Tester',
+          email: 'testing@awesome.com'
+        },
+        date: Date.now(),
+        isReply: false
+      };
+
+      request(app)
+        .post('/api/posts/' + postSeoTitle)
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(201)
+        .end((err, res) => {
+          console.log(err);
+          done();
+        });
+    }
+  });
 
   it('should return an error when commenter has no email');
 
