@@ -106,8 +106,11 @@ exports.comment = function (req, res) {
     if (err) { return handleError(res, err); }
     if (!post) { return res.status(404).json({ message: 'Post does not exist'}); }
     post.comments.push(comment);
-    post.save();
-    return res.status(201).json(post);
+    post.save((err, post) => {
+      if (err) { return handleError(res, err); }
+      return res.status(201).json(post);
+    });
+
   });
 };
 

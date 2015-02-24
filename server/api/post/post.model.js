@@ -14,7 +14,7 @@ var PostSchema = new Schema({
     body: { type: String, required: 'Comment body is required' },
     author: {
       name: { type: String, required: 'Author of the comment is required. (missing name)' },
-      email: String,
+      email: { type: String, required: 'Author of the comment is required. (missing email)' }
     },
     date: Date,
     isReply: Boolean

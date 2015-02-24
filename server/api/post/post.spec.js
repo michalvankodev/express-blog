@@ -153,10 +153,53 @@ describe('Post API', function() {
     }
   });
 
-  it('should return an error when commenter has no email');
+  it('should return not accept a comment without email', done => {
+    Post.create(newPost, (err, post) => {
+      if (err) { throw err.message; }
+      postComentWithoutEmail(post.seoTitle);
+    });
 
-  it('should return an error when commenter has no name');
+    function postComentWithoutEmail(postSeoTitle) {
+      var comment = {
+        body: 'Hey, Tests are awesome',
+        author: {
+          name: '', // left blank
+          email: 'testing@awesome.com'
+        },
+        isReply: false
+      };
 
+      request(app)
+        .post('/api/posts/' + postSeoTitle + '/comment')
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(500, done);
+    }
+  });
+
+  it('should return not accept a comment when commenter has no name', done => {
+    Post.create(newPost, (err, post) => {
+      if (err) { throw err.message; }
+      postComentWithoutName(post.seoTitle);
+    });
+
+    function postComentWithoutName(postSeoTitle) {
+      var comment = {
+        body: 'Hey, Tests are awesome',
+        author: {
+          name: 'Tester',
+          email: '' // left blank
+        },
+        isReply: false
+      };
+
+      request(app)
+        .post('/api/posts/' + postSeoTitle + '/comment')
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(500, done);
+    }
+  });
 
   it('should respond with JSON array', done => {
     request(app)
