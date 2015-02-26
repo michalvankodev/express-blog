@@ -1,6 +1,8 @@
 var app = angular.module('blogCms');
 
-app.controller('LoginController', function($scope, $http, $window, $mdToast, $state, User) {
+app.controller('LoginController', function($scope, $http, $window, $mdToast, $state, User, AppService) {
+  AppService.title = "Login";
+
   $scope.inProgress = false;
 
   $scope.authenticate = function authenticate() {

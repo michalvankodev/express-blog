@@ -39,6 +39,7 @@ UserSchema
       'username': this.username,
       'firstName': this.firstName,
       'lastName': this.lastName,
+      'email' : this.email,
       'role': this.role
     };
   });

@@ -19,12 +19,13 @@
 </head>
 <body ng-controller="MainController as MainCtrl" layout="row">
 
-  <div id="edge-menu-swiper" md-swipe-right="toggleMenu()">
+  <div id="edge-menu-swiper" md-swipe-right="toggleMenu()" hide-gt-sm>
   </div>
 
-  <eb-sidebar>
+  <eb-sidebar >
   </eb-sidebar>
-  <div role="main" layout="column" layout-fill>
+
+  <div role="main" layout="column" layout-fill flex>
     <md-toolbar class="top-toolbar" layout="row" layout-align="start center">
       <i class="fa fa-bars menu-toggler" ng-click="toggleMenu()" hide-gt-sm></i>
       <h1>{{AppService.title}}</h1>

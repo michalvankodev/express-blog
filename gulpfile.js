@@ -92,7 +92,7 @@ gulp.task('watch', function() {
     });
 
   // Watch JS files for traceur to transpile them
-  gulp.watch(SOURCE.ADMIN.js, ['traceur-admin']);
+  gulp.watch(SOURCE.ADMIN.js, ['babel-admin']);
 
   // Watch less stylesheets and compile them
   gulp.watch(SOURCE.CLIENT.less, ['less-client']);

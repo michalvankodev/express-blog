@@ -4,6 +4,7 @@ app.directive('ebSidebar', function() {
   return {
     restrict: 'EA',
     templateUrl: 'sidebar/sidebar.html',
+    transclude: true,
     controller: function ($scope) {
       var posts = {
         name: "Posts",
