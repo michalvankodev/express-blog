@@ -1,0 +1,21 @@
+<section>
+  <h1>Users</h1>
+
+  <md-content class="md-default-theme">
+    <md-list>
+      <md-item ng-repeat="user in users">
+        <md-item-content layout="row">
+          <eb-gravatar email="{{user.email}}"></eb-gravatar>
+          <section class="user-info" layout-fill>
+            <h3>{{user.firstName}} {{user.lastName}}</h3>
+            <footer layout="row">
+              <span flex>{{user.username}}</span> <span>Role: {{user.role}}</span>
+            </footer>
+          </section>
+        </md-item-content>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-item>
+    </md-list>
+  </md-content>
+
+</section>

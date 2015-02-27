@@ -4,15 +4,20 @@ app.directive('ebSidebar', function() {
   return {
     restrict: 'EA',
     templateUrl: 'sidebar/sidebar.html',
-    transclude: true,
     controller: function ($scope) {
-      var posts = {
-        name: "Posts",
-        state: "posts",
-        links: [{ name: "New post", state: "posts.new", icon: "fa-file-o" }]
+      var users = {
+        name: 'Users',
+        state: 'users',
+        links: [{ name: 'Add User', state: 'users.new', icon: 'fa-user-plus'}]
       }
 
-      $scope.sections = [posts];
+      var posts = {
+        name: 'Posts',
+        state: 'posts',
+        links: [{ name: 'New post', state: 'posts.new', icon: 'fa-file-o' }]
+      }
+
+      $scope.sections = [users, posts];
 
     }
   };

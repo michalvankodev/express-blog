@@ -61,5 +61,35 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       },
       data: { restrictTo: ['admin'] }
     })
+    .state('users', {
+      url: '/users',
+      views: {
+        'mainView': {
+          templateUrl: 'users/usersIndex.html',
+          controller: 'UsersController'
+        }
+      },
+      data: { restrictTo: ['admin'] }
+    })
+    .state('users.user', {
+      url: '/:username',
+      views: {
+        'mainView@': {
+          templateUrl: 'users/user.html',
+          controller: 'SingleUserController'
+        }
+      },
+      data: { restrictTo: ['admin'] }
+    })
+    .state('users.new', {
+      url: '/new',
+      views: {
+        'mainView@': {
+          templateUrl: 'users/user.html',
+          controller: 'NewUserController'
+        }
+      },
+      data: { restrictTo: ['admin'] }
+    })
     ;
 });
