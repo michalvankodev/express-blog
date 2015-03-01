@@ -3,12 +3,22 @@
 var User = require('./user.model');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
+import isNumeric from 'isnumeric';
+import _ from 'lodash';
 
 var validationError = function(res, err) {
   return res.json(422, err);
 };
 
 User.on('error', err => err);
+
+function singleUserQuery(query) {
+  if (isNumeric(query)) {
+    return User.findById(query);
+  } else {
+    return User.findOne({ 'username' : query });
+  }
+}
 
 /**
  * Get list of users
@@ -38,12 +48,28 @@ exports.create = function (req, res, next) {
  * Get a single user
  */
 exports.show = function (req, res, next) {
-  var userId = req.params.id;
 
-  User.findById(userId, function (err, user) {
-    if (err) return next(err);
-    if (!user) return res.send(401);
-    res.json(user.profile);
+    var response = function (err, user) {
+      if(err) { return res.status(500).json(err); }
+      if(!user) { return res.status(404); }
+      return res.json(user);
+    };
+
+    singleUserQuery(req.params.id).exec(response);
+};
+
+
+// Updates an existing user in the DB.
+exports.update = function(req, res) {
+  if (req.body._id) { delete req.body._id; }
+  singleUserQuery(req.params.id).exec((err, user) => {
+    if (err) { return res.status(500).json(err); }
+    if(!user) { return res.send(404); }
+    var updated = _.merge(user, req.body);
+    updated.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
   });
 };
 

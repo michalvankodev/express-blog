@@ -74,7 +74,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     .state('users.user', {
       url: '/:username',
       views: {
-        'mainView@': {
+        'userAdministration': {
           templateUrl: 'users/user.html',
           controller: 'SingleUserController'
         }

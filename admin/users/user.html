@@ -1,3 +1,36 @@
-<section>
-  
-</section>
+<form novalidate class="md-whiteframe-z1">
+  <md-toolbar class="md-accent" layout="row">
+    <h2 class="md-toolbar-tools" ng-if="!newUser">Editing user: {{user.username}}</h2>
+    <h2 class="md-toolbar-tools" ng-if="newUser" flex>New user</h2>
+
+    <md-button ng-click="save()">
+      <i class="fa fa-check"></i>
+    </md-button>
+    <md-button ng-click="erase()">
+      <i class="fa fa-user-times"></i>
+    </md-button>
+  </md-toolbar>
+
+  <md-input-container>
+    <label>Username</label>
+    <input ng-model="user.username" />
+  </md-input-container>
+
+  <div layout="row" layout-sm="column">
+    <md-input-container flex>
+      <label>First name</label>
+      <input ng-model="user.firstName" />
+    </md-input-container>
+    <md-input-container flex>
+      <label>Last name</label>
+      <input ng-model="user.lastName" />
+    </md-input-container>
+  </div>
+
+  <md-radio-group ng-model="user.role" layout="row">
+    <span>Role:</span>
+    <md-radio-button value="admin">Admin</md-radio-button>
+    <md-radio-button value="user">User</md-radio-button>
+  </md-radio-group>
+
+</form>
