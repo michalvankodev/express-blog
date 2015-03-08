@@ -1,5 +1,6 @@
 'use strict';
 
+import reportError from '../error-reporter';
 var _ = require('lodash');
 var Post = require('./post.model');
 var QueryParser = require('../queryparser.js');
@@ -38,7 +39,7 @@ exports.index = function(req, res) {
   //console.log(conditions, options);
 
   Post.find(conditions, null, options, function (err, posts) {
-    if(err) { return handleError(res, err); }
+    if(err) { return res.status(500).json(reportError(err)); }
     return res.status(200).json(posts);
   });
 
@@ -53,7 +54,7 @@ exports.index = function(req, res) {
 exports.show = function(req, res) {
 
   var response = function (err, post) {
-    if(err) { return handleError(res, err); }
+    if(err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.status(404); }
     return res.json(post);
   };
@@ -64,7 +65,7 @@ exports.show = function(req, res) {
 // Creates a new post in the DB.
 exports.create = function(req, res) {
   Post.create(req.body, function(err, post) {
-    if (err) { return handleError(res, err); }
+    if (err) { return res.status(500).json(reportError(err)); }
     return res.status(201).json(post);
   });
 };
@@ -73,11 +74,11 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
   if (req.body._id) { delete req.body._id; }
   Post.findById(req.params.id, function (err, post) {
-    if (err) { return handleError(res, err); }
+    if (err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.send(404); }
     var updated = _.merge(post, req.body);
     updated.save(function (err) {
-      if (err) { return handleError(res, err); }
+      if (err) { return res.status(500).json(reportError(err)); }
       return res.status(200).json(post);
     });
   });
@@ -86,10 +87,10 @@ exports.update = function(req, res) {
 // Deletes a post from the DB.
 exports.destroy = function(req, res) {
   Post.findById(req.params.id, function (err, post) {
-    if(err) { return handleError(res, err); }
+    if (err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.send(404); }
     post.remove(function(err) {
-      if(err) { return handleError(res, err); }
+      if(err) { return res.status(500).json(reportError(err)); }
       return res.send(204);
     });
   });
@@ -103,11 +104,11 @@ exports.comment = function (req, res) {
   comment.date = Date.now();
 
   singlePostQuery(req.params.id).exec((err, post) => {
-    if (err) { return handleError(res, err); }
+    if (err) { return res.status(500).json(reportError(err)); }
     if (!post) { return res.status(404).json({ message: 'Post does not exist'}); }
     post.comments.push(comment);
     post.save((err, post) => {
-      if (err) { return handleError(res, err); }
+      if (err) { return res.status(500).json(reportError(err)); }
       return res.status(201).json(post);
     });
 
@@ -117,7 +118,3 @@ exports.comment = function (req, res) {
 Post.on('error', function(err) {
   return err;
 });
-
-function handleError(res, err) {
-  return res.status(500).json(err);
-}

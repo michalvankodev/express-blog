@@ -6,9 +6,10 @@ var jwt = require('jsonwebtoken');
 import isNumeric from 'isnumeric';
 import _ from 'lodash';
 import generatePassword from 'password-generator';
+import reportError from '../error-reporter';
 
 var validationError = function(res, err) {
-  return res.json(422, err);
+  return res.status(422).json(reportError(err));
 };
 
 User.on('error', err => err);
@@ -40,8 +41,7 @@ exports.create = function (req, res, next) {
   newUser.username = newUser.username.toLowerCase();
   newUser.password = generatePassword();
   newUser.save((err, user) => {
-    console.log(err);
-    if (err) { return res.status(500).json(err); }
+    if (err) { return res.status(500).json(reportError(err)); }
     return res.status(201);
   });
 };
@@ -52,7 +52,7 @@ exports.create = function (req, res, next) {
 exports.show = function (req, res, next) {
 
     var response = function (err, user) {
-      if(err) { return res.status(500).json(err); }
+      if(err) { return res.status(500).json(reportError(err)); }
       if(!user) { return res.status(404); }
       return res.json(user);
     };
@@ -65,7 +65,7 @@ exports.show = function (req, res, next) {
 exports.update = function(req, res) {
   if (req.body._id) { delete req.body._id; }
   singleUserQuery(req.params.id).exec((err, user) => {
-    if (err) { return res.status(500).json(err); }
+    if (err) { return res.status(500).json(reportError(err)); }
     if(!user) { return res.send(404); }
     var updated = _.merge(user, req.body);
     updated.save(function (err) {
@@ -81,7 +81,7 @@ exports.update = function(req, res) {
  */
 exports.destroy = function(req, res) {
   User.findByIdAndRemove(req.params.id, function(err, user) {
-    if(err) return res.send(500, err);
+    if(err) { return res.status(500).json(reportError(err)); }
     return res.send(204);
   });
 };
