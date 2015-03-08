@@ -5,6 +5,7 @@ var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
 import isNumeric from 'isnumeric';
 import _ from 'lodash';
+import generatePassword from 'password-generator';
 
 var validationError = function(res, err) {
   return res.json(422, err);
@@ -36,11 +37,12 @@ exports.index = function(req, res) {
  */
 exports.create = function (req, res, next) {
   var newUser = new User(req.body);
-  newUser.username = newUser.username.toLowercase();
-  newUser.save(function(err, user) {
-    if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    res.json({ token: token });
+  newUser.username = newUser.username.toLowerCase();
+  newUser.password = generatePassword();
+  newUser.save((err, user) => {
+    console.log(err);
+    if (err) { return res.status(500).json(err); }
+    return res.status(201);
   });
 };
 

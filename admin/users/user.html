@@ -3,34 +3,41 @@
     <h2 class="md-toolbar-tools" ng-if="!newUser">Editing user: {{user.username}}</h2>
     <h2 class="md-toolbar-tools" ng-if="newUser" flex>New user</h2>
 
-    <md-button ng-click="save()">
+    <md-button ng-click="save()" layout="column" ng-if="!newUser" layout-align="center">
       <i class="fa fa-check"></i>
+      <span hide-sm>Save</span>
     </md-button>
-    <md-button ng-click="erase()">
+    <md-button ng-click="add()" layout="column" layout-align="center">
+      <i class="fa fa-check"></i>
+      <span hide-sm>Save</span>
+    </md-button>
+    <md-button ng-click="remove()" layout="column" layout-align="center">
       <i class="fa fa-user-times"></i>
+      <span hide-sm>Remove</span>
     </md-button>
   </md-toolbar>
 
-  <md-input-container>
-    <label>Username</label>
-    <input ng-model="user.username" />
-  </md-input-container>
-
-  <div layout="row" layout-sm="column">
-    <md-input-container flex>
-      <label>First name</label>
-      <input ng-model="user.firstName" />
+  <section class="form-fields">
+    <md-input-container>
+      <label>Username</label>
+      <input ng-model="user.username" />
     </md-input-container>
-    <md-input-container flex>
-      <label>Last name</label>
-      <input ng-model="user.lastName" />
-    </md-input-container>
-  </div>
 
-  <md-radio-group ng-model="user.role" layout="row">
-    <span>Role:</span>
-    <md-radio-button value="admin">Admin</md-radio-button>
-    <md-radio-button value="user">User</md-radio-button>
-  </md-radio-group>
+    <div layout="row" layout-sm="column">
+      <md-input-container flex>
+        <label>First name</label>
+        <input ng-model="user.firstName" />
+      </md-input-container>
+      <md-input-container flex>
+        <label>Last name</label>
+        <input ng-model="user.lastName" />
+      </md-input-container>
+    </div>
 
+    <md-radio-group ng-model="user.role" layout="row">
+      <span>Role:</span>
+      <md-radio-button value="admin">Admin</md-radio-button>
+      <md-radio-button value="user">User</md-radio-button>
+    </md-radio-group>
+  </section>
 </form>

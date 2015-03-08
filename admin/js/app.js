@@ -84,9 +84,9 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     .state('users.new', {
       url: '/new',
       views: {
-        'mainView@': {
+        'userAdministration': {
           templateUrl: 'users/user.html',
-          controller: 'NewUserController'
+          controller: 'SingleUserController'
         }
       },
       data: { restrictTo: ['admin'] }
