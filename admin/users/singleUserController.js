@@ -24,7 +24,7 @@ app.controller('SingleUserController', function($scope, $state, $http, AppServic
     $http.post('/api/users', $scope.user)
       .success( data => {
         $scope.saving = false;
-
+        $scope.refreshUsers();
         $state.go('users');
       });
   };
@@ -34,10 +34,22 @@ app.controller('SingleUserController', function($scope, $state, $http, AppServic
     $http.put('/api/users/' + $scope.user.username, $scope.user)
       .success((data) => {
         $scope.saving = false;
+        $scope.refreshUsers();
+        $state.go('users');
       });
   };
 
   $scope.remove = function() {
-  // TODO
+    $scope.deleting = true;
+    $http.delete('/api/users/' + $scope.user.username)
+      .success((data) => {
+        $scope.deleting = false;
+        $scope.refreshUsers();
+        $state.go('users');
+      });
+  };
+
+  $scope.refreshUsers = function() {
+    $scope.$parent.getUsers();
   };
 });

@@ -69,7 +69,7 @@ exports.update = function(req, res) {
     if(!user) { return res.send(404); }
     var updated = _.merge(user, req.body);
     updated.save(function (err) {
-      if (err) { return handleError(res, err); }
+      if (err) { return res.status(500).json(reportError(err)); }
       return res.status(200).json(user);
     });
   });
@@ -80,9 +80,13 @@ exports.update = function(req, res) {
  * restriction: 'admin'
  */
 exports.destroy = function(req, res) {
-  User.findByIdAndRemove(req.params.id, function(err, user) {
+  singleUserQuery(req.params.id).exec((err, user) => {
     if(err) { return res.status(500).json(reportError(err)); }
-    return res.send(204);
+    if(!user) { return res.send(404); }
+    user.remove((err, user) => {
+      if(err) { return res.status(500).json(reportError(err)); }
+      return res.send(204);
+    });
   });
 };
 
