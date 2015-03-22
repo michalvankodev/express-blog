@@ -29,7 +29,7 @@ function singleUserQuery(query) {
 exports.index = function(req, res) {
   User.find({}, '-salt -hashedPassword', function (err, users) {
     if(err) return res.send(500, err);
-    res.json(200, users);
+    return res.status(200).json(users);
   });
 };
 
@@ -42,7 +42,8 @@ exports.create = function (req, res, next) {
   newUser.password = generatePassword();
   newUser.save((err, user) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    return res.status(201);
+    if (!user) { return res.status(500).json(reportError(err)); }
+    return res.status(201).json({message: `User ${user.username} succesfully created.`});
   });
 };
 
