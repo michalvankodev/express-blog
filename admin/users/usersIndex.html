@@ -3,6 +3,10 @@
   <ui-view name="userAdministration" class="user-admin-panel">
   </ui-view>
 
+  <md-button ui-sref="users.new">
+    <i class="fa fa-user-plus"></i> Add user
+  </md-button>
+
   <md-content class="md-default-theme users-list md-whiteframe-z1">
     <md-list>
       <md-item ng-repeat="user in users">
@@ -19,8 +23,5 @@
       </md-item>
     </md-list>
   </md-content>
-  <md-button ui-sref="users.new">
-    <i class="fa fa-user-plus"></i> Add user
-  </md-button>
 
 </section>

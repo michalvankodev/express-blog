@@ -1,11 +1,29 @@
-<section class="posts-section" layout="row">
-  <article ng-repeat="post in posts">
-    <header>
-      <h2>{{post.title}}</h2>
-      <aside>
-        <em class="author">{{post.author.name}}</em>
-        <em class="date">{{post.date}}</em>
-      </aside>
-    </header>
-  </article>
+<section class="posts-section">
+  <header>
+    <md-button ui-sref="posts.new">
+      <i class="fa fa-file-o"></i>
+      New Post
+    </md-button>
+
+    <span class="total-posts">Total Posts: {{posts.length}}</span>
+  </header>
+
+  <md-content class="posts-list md-whiteframe-z1">
+    <md-list>
+      <md-item ng-repeat="post in posts" layout="row">
+        <aside>
+          <eb-gravatar email="{{user.email}}"></eb-gravatar>
+        </aside>
+        <md-item-content layout="column">
+          <h2>{{post.title}}</h2>
+          <footer>
+            <em class="author">{{post.author.name}}</em>
+            <em class="date">{{post.date}}</em>
+            <em class="comments">Comments: {{post.comments.length}}</em>
+            <em class="publish-state" ng-class="post.state | lowercase">{{post.state}}</em>
+          </footer>
+        </md-item-content>
+      </md-item>
+    </md-list>
+  </md-content>
 </section>

@@ -6,7 +6,7 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['mocha'],
 
-    browsers: ['Firefox'],
+    browsers: [],
 
     files: [
       'bower_components/angular/angular.js',

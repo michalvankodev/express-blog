@@ -13,11 +13,13 @@ var isNumeric = require('isnumeric');
  * @returns Post.query
  */
 function singlePostQuery(query) {
+  var post;
   if (isNumeric(query)) {
-    return Post.findById(query);
+    post = Post.findById(query);
   } else {
-    return Post.findOne({ 'seoTitle' : query });
+    post = Post.findOne({ 'seoTitle' : query });
   }
+  return post.populate('author', '-salt -hashedPassword');
 }
 
 // Get list of posts
@@ -34,9 +36,6 @@ exports.index = function(req, res) {
 
   var conditions = QueryParser.getConditions(req.query, defaultConditions);
   var options = QueryParser.getOptions(req.query, defaultOptions);
-
-  // future debuggin
-  //console.log(conditions, options);
 
   Post.find(conditions, null, options, function (err, posts) {
     if(err) { return res.status(500).json(reportError(err)); }
@@ -56,6 +55,7 @@ exports.show = function(req, res) {
   var response = function (err, post) {
     if(err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.status(404); }
+
     return res.json(post);
   };
 
@@ -64,7 +64,13 @@ exports.show = function(req, res) {
 
 // Creates a new post in the DB.
 exports.create = function(req, res) {
-  Post.create(req.body, function(err, post) {
+  // Set author of the post
+  // The `isAuthenticated` function set user to the request.
+  var newPost = req.body;
+  newPost.author = req.user;
+  newPost.lastUpdated = Date.now();
+
+  Post.create(newPost, function(err, post) {
     if (err) { return res.status(500).json(reportError(err)); }
     return res.status(201).json(post);
   });
@@ -76,7 +82,10 @@ exports.update = function(req, res) {
   Post.findById(req.params.id, function (err, post) {
     if (err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.send(404); }
+
     var updated = _.merge(post, req.body);
+    updated.lastUpdated = Date.now();
+
     updated.save(function (err) {
       if (err) { return res.status(500).json(reportError(err)); }
       return res.status(200).json(post);

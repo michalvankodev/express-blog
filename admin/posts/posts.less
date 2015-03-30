@@ -1,0 +1,17 @@
+@import (reference) "../less/main.less";
+
+.posts-section {
+  .total-posts {
+    float: right;
+  }
+}
+
+.publish-state {
+  &.published {
+    color: @positive;
+  }
+
+  &.draft {
+    color: @warn-color;
+  }
+}
