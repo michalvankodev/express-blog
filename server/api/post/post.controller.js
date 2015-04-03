@@ -5,6 +5,7 @@ var _ = require('lodash');
 var Post = require('./post.model');
 var QueryParser = require('../queryparser.js');
 var isNumeric = require('isnumeric');
+import auth from '../../auth/auth.service';
 
 /**
  * Get single post by a query
@@ -19,27 +20,34 @@ function singlePostQuery(query) {
   } else {
     post = Post.findOne({ 'seoTitle' : query });
   }
-  return post.populate('author', '-salt -hashedPassword');
+  return post;
 }
 
 // Get list of posts
 exports.index = function(req, res) {
 
   var defaultConditions = {
-    state : 'Published'
+    state: 'Published'
   };
 
   var defaultOptions = {
-    limit : 10,
+    limit: 10,
     sort: 'createdDate',
   };
 
   var conditions = QueryParser.getConditions(req.query, defaultConditions);
   var options = QueryParser.getOptions(req.query, defaultOptions);
 
-  Post.find(conditions, null, options, function (err, posts) {
-    if(err) { return res.status(500).json(reportError(err)); }
-    return res.status(200).json(posts);
+  if (conditions.state === 'Draft') {
+    // TODO: restrict access for not authentificated
+    auth.isAuthenticated(req, res);
+  }
+
+  Post.find(conditions, null, options)
+    .populate('author', '-salt -hashedPassword')
+    .exec((err, posts) => {
+      if(err) { return res.status(500).json(reportError(err)); }
+      return res.status(200).json(posts);
   });
 
 };
@@ -59,7 +67,9 @@ exports.show = function(req, res) {
     return res.json(post);
   };
 
-  singlePostQuery(req.params.id).exec(response);
+  singlePostQuery(req.params.id)
+    .populate('author', '-salt -hashedPassword')
+    .exec(response);
 };
 
 // Creates a new post in the DB.

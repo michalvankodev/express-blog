@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import _ from 'lodash';
 
 /**
  * Get conditions object from query for Mongoose.Model.find()
@@ -9,9 +9,28 @@ var _ = require('lodash');
  * @returns
  */
 exports.getConditions = function(query, options) {
-  var conditions = query.q || {};
+  if (!query.q) {
+    return options;
+  }
+  
+  var conditions = JSON.parse(query.q) || {};
 
-  return _.defaults(conditions, options);
+  /**
+   * Merges query objects with default options
+   *
+   * To select any value of a field we have left the key out of an object
+   * To rewrite defaults we have to omit the chosen 'any' value from the object.
+   *
+   * @returns object to be inserted into Mongoose query
+   */
+  return _.omit(_.defaults(conditions, options), value => {
+    if (value == 'any') {
+      return true;
+    }
+    else {
+      return false;
+    }
+  });
 };
 
 /**
