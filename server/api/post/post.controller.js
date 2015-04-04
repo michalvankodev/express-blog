@@ -32,7 +32,7 @@ exports.index = function(req, res) {
 
   var defaultOptions = {
     limit: 10,
-    sort: 'createdDate',
+    sort: '-createdDate'
   };
 
   var conditions = QueryParser.getConditions(req.query, defaultConditions);
@@ -77,7 +77,7 @@ exports.create = function(req, res) {
   // Set author of the post
   // The `isAuthenticated` function set user to the request.
   var newPost = req.body;
-  newPost.author = req.user;
+  newPost.author = req.user._id;
   newPost.lastUpdated = Date.now();
 
   Post.create(newPost, function(err, post) {

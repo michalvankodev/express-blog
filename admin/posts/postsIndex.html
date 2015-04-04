@@ -17,9 +17,9 @@
         <md-item-content layout="column">
           <h2>{{post.title}}</h2>
           <footer>
-            <em class="author">{{post.author.name}}</em>
-            <em class="date">{{post.date}}</em>
-            <em class="comments">Comments: {{post.comments.length}}</em>
+            <em class="author">{{post.author.firstName}} {{post.author.lastName}}</em>
+            <em class="date">{{post.createdDate | date:'d.M.yyyy HH:mm'}}</em>
+            <em class="comments">{{post.comments.length}} comments</em>
             <em class="publish-state" ng-class="post.state | lowercase">{{post.state}}</em>
           </footer>
         </md-item-content>

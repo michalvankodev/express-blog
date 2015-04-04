@@ -2,6 +2,11 @@
 @grey: #aaa;
 @positive: #72d572;
 
+body {
+  max-height: 100%;
+  max-width: 100%;
+}
+
 .thin-border {
   border: 1px solid @grey;
 }
@@ -26,6 +31,7 @@ ui-view > section {
   font-size: 1em;
   margin-left: 1em;
 }
+
 #edge-menu-swiper {
   position: fixed;
   height: 100%;
@@ -34,5 +40,27 @@ ui-view > section {
   width: 10px;
   background-color: transparent;
   z-index: 5;
+}
 
+#mainView {
+  overflow-y: auto;
+}
+
+md-list md-item-content {
+  padding: 0.8em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+
+  &:hover {
+    background-color: #eaeaea;
+  }
+
+  &.active {
+    background-color: #80d8ff;
+  }
+
+  h3 {
+    margin: 0 0 0.5em 0;
+  }
 }
