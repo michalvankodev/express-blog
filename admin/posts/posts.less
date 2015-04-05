@@ -1,11 +1,5 @@
 @import (reference) "../less/main.less";
 
-.posts-section {
-  .total-posts {
-    float: right;
-  }
-}
-
 .publish-state {
   &.published {
     color: @positive;
@@ -13,5 +7,19 @@
 
   &.draft {
     color: @warn-color;
+  }
+}
+
+.posts-list {
+  h2 {
+    margin: 0;
+    text-align: left;
+  }
+
+  header {
+    margin-bottom: 1em;
+  }
+  .date {
+    text-align: right;
   }
 }

@@ -3,17 +3,17 @@
     <h2 class="md-toolbar-tools" ng-if="!newUser">Editing user: {{user.username}}</h2>
     <h2 class="md-toolbar-tools" ng-if="newUser" flex>New user</h2>
 
-    <md-button ng-click="save()" layout="column" ng-if="!newUser" layout-align="center center">
+    <md-button ng-click="save()" ng-if="!newUser">
       <i class="fa fa-check"></i>
-      <span hide-sm hide-md>Save</span>
+      Save
     </md-button>
-    <md-button ng-click="add()" layout="column" ng-if="newUser" layout-align="center center">
+    <md-button ng-click="add()" ng-if="newUser">
       <i class="fa fa-check"></i>
-      <span hide-sm hide-md>Save</span>
+      Save
     </md-button>
-    <md-button ng-click="removeDialog($event)" layout="column" ng-if="!newUser" layout-align="center center">
+    <md-button ng-click="removeDialog($event)" ng-if="!newUser">
       <i class="fa fa-user-times"></i>
-      <span hide-sm hide-md>Remove</span>
+      Remove
     </md-button>
   </md-toolbar>
 

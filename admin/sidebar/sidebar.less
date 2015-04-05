@@ -1,13 +1,17 @@
+@import (reference) "../less/main.less";
+
 eb-sidebar {
 
   .site-sidenav {
     width: 100%;
   }
 
-  .md-button {
-    width: 100%;
+  .md-button, .md-button.md-default-theme {
     text-align: left;
+    margin: 0;
+    border-radius: 0;
   }
+
   .section-button {
     font-weight: bold;
     color: #666;
@@ -16,7 +20,11 @@ eb-sidebar {
   }
 
   .link-button {
-    padding: 0.5em 1em;
     text-transform: none;
+    padding-left: 1em;
+  }
+
+  section {
+
   }
 }

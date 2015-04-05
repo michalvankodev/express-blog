@@ -1,5 +1,5 @@
 <section class="posts-section">
-  <header>
+  <header layout-align="space-between center" layout="row">
     <md-button ui-sref="posts.new">
       <i class="fa fa-file-o"></i>
       New Post
@@ -15,12 +15,14 @@
           <eb-gravatar email="{{user.email}}"></eb-gravatar>
         </aside>
         <md-item-content layout="column">
-          <h2>{{post.title}}</h2>
-          <footer>
-            <em class="author">{{post.author.firstName}} {{post.author.lastName}}</em>
-            <em class="date">{{post.createdDate | date:'d.M.yyyy HH:mm'}}</em>
-            <em class="comments">{{post.comments.length}} comments</em>
+          <header layout="row">
+            <h2 flex>{{post.title}}</h2>
             <em class="publish-state" ng-class="post.state | lowercase">{{post.state}}</em>
+          </header>
+          <footer layout="row" layout-align="space-between center">
+            <em class="author" flex="33">{{post.author.firstName}} {{post.author.lastName}}</em>
+            <em class="comments" flex="33">{{post.comments.length}} comments</em>
+            <em class="date" flex="33">{{post.createdDate | date:'d.M.yyyy HH:mm'}}</em>
           </footer>
         </md-item-content>
       </md-item>
