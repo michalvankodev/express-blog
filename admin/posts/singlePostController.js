@@ -47,7 +47,7 @@ app.controller('SinglePostController', function($scope, $state, $http, User, App
   };
 
   $scope.savePost = function savePost() {
-    if (newPost) {
+    if ($scope.newPost) {
       $scope.saveNewPost();
     }
     else {

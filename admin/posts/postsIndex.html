@@ -10,7 +10,7 @@
 
   <md-content class="posts-list md-whiteframe-z1">
     <md-list>
-      <md-item ng-repeat="post in posts" layout="row">
+      <md-list-item ng-repeat="post in posts" layout="row">
         <aside>
           <eb-gravatar email="{{user.email}}"></eb-gravatar>
         </aside>
@@ -25,7 +25,7 @@
             <em class="date" flex="33">{{post.createdDate | date:'d.M.yyyy HH:mm'}}</em>
           </footer>
         </md-item-content>
-      </md-item>
+      </md-list-item>
     </md-list>
   </md-content>
 </section>
