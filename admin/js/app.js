@@ -41,8 +41,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       },
       data: { restrictTo: ['admin'] }
     })
-    .state('posts.post', {
-      url: '/:post',
+    .state('posts.editPost', {
+      url: '/:seoTitle',
       views: {
         'mainView@': {
           templateUrl: 'posts/post.html',
@@ -55,8 +55,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       url: '/new',
       views: {
         'mainView@': {
-          templateUrl: 'posts/newPost.html',
-          controller: 'NewPostController'
+          templateUrl: 'posts/post.html',
+          controller: 'SinglePostController'
         }
       },
       data: { restrictTo: ['admin'] }

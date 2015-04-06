@@ -14,7 +14,7 @@
         <aside>
           <eb-gravatar email="{{user.email}}"></eb-gravatar>
         </aside>
-        <md-item-content layout="column">
+        <md-item-content layout="column" ui-sref="posts.editPost({seoTitle: post.seoTitle})">
           <header layout="row">
             <h2 flex>{{post.title}}</h2>
             <em class="publish-state" ng-class="post.state | lowercase">{{post.state}}</em>
