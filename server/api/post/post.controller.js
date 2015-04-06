@@ -89,14 +89,15 @@ exports.create = function(req, res) {
 // Updates an existing post in the DB.
 exports.update = function(req, res) {
   if (req.body._id) { delete req.body._id; }
-  Post.findById(req.params.id, function (err, post) {
+
+  singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.send(404); }
 
     var updated = _.merge(post, req.body);
     updated.lastUpdated = Date.now();
 
-    updated.save(function (err) {
+    updated.save((err, post) => {
       if (err) { return res.status(500).json(reportError(err)); }
       return res.status(200).json(post);
     });

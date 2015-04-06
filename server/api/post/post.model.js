@@ -20,7 +20,7 @@ var PostSchema = new Schema({
     isReply: Boolean
   }],
 
-  state: { type: String, enum: ['Draft','Published'] }
+  state: { type: String, enum: ['Draft','Published'], default: 'Draft'}
 });
 
 module.exports = mongoose.model('Post', PostSchema);
