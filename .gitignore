@@ -9,16 +9,7 @@ pids
 *.seed
 
 node_modules
-public
 .tmp
 .idea
 dist
 /server/config/local.env.js
-
-### generated stylesheets and scripts
-generated
-
-bower_components
-
-### I am using angular fullstack generator but not fully configured
-.yo-rc.json

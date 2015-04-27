@@ -12,7 +12,7 @@ exports.getConditions = function(query, options) {
   if (!query.q) {
     return options;
   }
-  
+
   var conditions = JSON.parse(query.q) || {};
 
   /**
@@ -24,7 +24,7 @@ exports.getConditions = function(query, options) {
    * @returns object to be inserted into Mongoose query
    */
   return _.omit(_.defaults(conditions, options), value => {
-    if (value == 'any') {
+    if (value === 'any') {
       return true;
     }
     else {

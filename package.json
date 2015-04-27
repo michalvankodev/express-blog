@@ -1,8 +1,8 @@
 {
   "name": "express-blog",
   "version": "0.1.0",
-  "description": "Simple web blog based on express",
-  "main": "/server/app.js",
+  "description": "Backend for simple web blog based on express",
+  "main": "/src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -35,35 +35,20 @@
     "method-override": "*",
     "mongoose": "*",
     "morgan": "*",
-    "password-generator": "*",
-    "serve-favicon": "*"
+    "password-generator": "*"
   },
   "devDependencies": {
     "babel": "*",
     "chai": "*",
     "chai-as-promised": "*",
-    "connect-livereload": "*",
     "del": "*",
     "gulp": "*",
-    "gulp-babel": "*",
-    "gulp-concat": "*",
-    "gulp-inject": "*",
     "gulp-jshint": "*",
-    "gulp-less": "*",
-    "gulp-livereload": "*",
     "gulp-nodemon": "*",
-    "gulp-order": "*",
-    "gulp-protractor": "*",
-    "gulp-rename": "*",
     "gulp-spawn-mocha": "*",
-    "gulp-util": "*",
-    "istanbul": "*",
     "jshint-stylish": "*",
-    "karma": "*",
-    "karma-babel-preprocessor": "*",
-    "karma-firefox-launcher": "*",
-    "karma-mocha": "*",
     "mocha": "*",
+    "require-dir": "^0.3.0",
     "should": "*",
     "supertest": "*"
   }
