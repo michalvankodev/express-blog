@@ -107,7 +107,7 @@ describe('Post API', function() {
       .expect(500, done);
   });
 
-  it('should respond with the post', done => {
+  it('should respond with a single post', done => {
     // Add post. Should be able to add
     request(app)
       .post('/api/posts')
@@ -204,6 +204,25 @@ describe('Post API', function() {
   it('should respond with JSON array', done => {
     request(app)
       .get('/api/posts')
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.body.should.be.instanceof(Array);
+        done();
+      });
+  });
+
+  it('should not respond with drafts when unauthorized', done => {
+    request(app)
+      .get('/api/posts?q={"state":"Draft"}')
+      .expect(401, done);
+  });
+
+  it('should show all post when authorized', done => {
+    request(app)
+      .get('/api/posts?q={"state":"any"}')
+      .set('authorization', 'Bearer ' + userToken)
       .expect(200)
       .expect('Content-Type', /json/)
       .end((err, res) => {

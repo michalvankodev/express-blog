@@ -38,18 +38,23 @@ exports.index = function(req, res) {
   var conditions = QueryParser.getConditions(req.query, defaultConditions);
   var options = QueryParser.getOptions(req.query, defaultOptions);
 
-  if (conditions.state === 'Draft') {
-    // TODO: restrict access for not authentificated
-    auth.isAuthenticated(req, res);
+  if (conditions.state !== 'Published') {
+    auth.hasRole('admin')(req, res, returnPosts);
+  }
+  else {
+    returnPosts();
   }
 
-  Post.find(conditions, null, options)
-    .populate('author', '-salt -hashedPassword')
-    .exec((err, posts) => {
-      if(err) { return res.status(500).json(reportError(err)); }
-      return res.status(200).json(posts);
-  });
+  function returnPosts(err) {
+    if(err) { return res.status(401).json(err.message);}
 
+    Post.find(conditions, null, options)
+      .populate('author', '-salt -hashedPassword')
+      .exec((err, posts) => {
+        if(err) { return res.status(500).json(reportError(err)); }
+        return res.status(200).json(posts);
+    });
+  }
 };
 
 /**
