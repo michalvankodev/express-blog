@@ -215,13 +215,13 @@ describe('Post API', function() {
 
   it('should not respond with drafts when unauthorized', done => {
     request(app)
-      .get('/api/posts?q={"state":"Draft"}')
+      .get('/api/posts?state=Draft')
       .expect(401, done);
   });
 
   it('should show all post when authorized', done => {
     request(app)
-      .get('/api/posts?q={"state":"any"}')
+      .get('/api/posts?state=any')
       .set('authorization', 'Bearer ' + userToken)
       .expect(200)
       .expect('Content-Type', /json/)

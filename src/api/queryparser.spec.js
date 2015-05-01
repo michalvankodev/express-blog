@@ -20,12 +20,12 @@ describe('QueryParser', () => {
 
   it('getConditions should return defaults when query is empty', () => {
     var query = {};
-    QueryParser.getConditions(query, defaultConditions).should.be.equal(defaultConditions);
+    QueryParser.getConditions(query, defaultConditions).should.be.eql(defaultConditions);
   });
 
   it('getConditions should rewrite defaults when query is set', () => {
     var query = {
-      q: '{"state": "Draft"}'
+      state: 'Draft'
     };
 
     var conditions = QueryParser.getConditions(query, defaultConditions);
@@ -35,7 +35,7 @@ describe('QueryParser', () => {
 
   it('getConditions should omit keys/values when they are set to any', () => {
     var query = {
-      q: '{"state": "any"}'
+      state: 'any'
     };
 
     var conditions = QueryParser.getConditions(query, defaultConditions);
@@ -43,4 +43,45 @@ describe('QueryParser', () => {
     conditions.type.should.equal(defaultConditions.type);
   });
 
+  it('queryOptions should not get into conditions', () => {
+    let query = {
+      state: 'Draft',
+      type: 'classic',
+      sort: '-field',
+      limit: '20'
+    };
+
+    let conditions = QueryParser.getConditions(query, defaultConditions);
+    expect(conditions.sort).to.not.exist;
+    expect(conditions.limit).to.not.exist;
+  });
+
+  it('getOptions should only return options and nothing else', () => {
+    let query = {
+      state: 'Draft',
+      type: 'classic',
+      sort: '-field',
+      limit: '20'
+    };
+    let expectedOptions = {
+      sort: '-field',
+      limit: '20'
+    }
+
+    let options = QueryParser.getOptions(query, defaultOptions);
+    options.should.eql(expectedOptions);
+  });
+
+  it('getOptions should reassign option from query but not omit defaults', () => {
+    let query = {
+      limit: 22
+    };
+    let expectedOptions = {
+      limit: 22,
+      sort: 'createdDate'
+    };
+
+    let options = QueryParser.getOptions(query, defaultOptions);
+    options.should.eql(expectedOptions);
+  });
 });

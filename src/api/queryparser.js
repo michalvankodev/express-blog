@@ -2,18 +2,17 @@
 
 import _ from 'lodash';
 
+var queryOptions = exports.queryOptions = ['sort', 'limit', 'skip'];
+
 /**
  * Get conditions object from query for Mongoose.Model.find()
  *
- * @param
- * @returns
+ * @param {Object} query Parsed from the hitted URL
+ * @param {Object} [options] Default conditions
+ * @returns {Object} Conditions for mongoose query
  */
 exports.getConditions = function(query, options) {
-  if (!query.q) {
-    return options;
-  }
-
-  var conditions = JSON.parse(query.q) || {};
+  var conditions = _.omit(query, queryOptions);
 
   /**
    * Merges query objects with default options
@@ -42,7 +41,7 @@ exports.getConditions = function(query, options) {
  */
 exports.getOptions = function(query, options) {
   // Select options from query
-  var selectedOptions = _.pick(query, ['sort', 'limit', 'skip']);
+  var selectedOptions = _.pick(query, queryOptions);
 
   // Return selected options from query. Set defaults
   return _.defaults(selectedOptions, options);
