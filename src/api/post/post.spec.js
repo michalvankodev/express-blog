@@ -15,51 +15,53 @@ var user = new User({
 });
 var userToken;
 
-describe('Post API', function() {
-  before(done => {
-    // Clear users before testing
-    // Create an admin
-    User.remove().exec().then(function() {
-      // Create users
-      user.save(() => {
-        // Get auth token for user
-        var credentials = {
-          'username' : user.username,
-          'password' : user.password
-        };
-        request(app)
-          .post('/auth')
-          .send(credentials)
-          .expect(201)
-          .end((err, res) => {
-            userToken = res.body.token;
-            done();
-        });
+var newPost = {
+  title: 'Testing Post',
+  seoTitle: 'testing-post',
+  author: user._id,
+  body: '<p>This is a testing post</p>',
+  state: 'Published'
+};
+
+/**
+ * Remove all users and create an admin
+ * @param {Function} done Callback to be invoked when done.
+ */
+function createAdmin(done) {
+  User.remove().exec().then(() => {
+    // Create user
+    user.save(() => {
+      // Get auth token for user
+      var credentials = {
+        'username' : user.username,
+        'password' : user.password
+      };
+      request(app)
+        .post('/auth')
+        .send(credentials)
+        .expect(201)
+        .end((err, res) => {
+          userToken = res.body.token;
+          done();
       });
     });
   });
+}
 
-  before(done => {
-    // Clear all posts
-    Post.remove().exec().then(() => {
-      done();
-    });
+/**
+ * Clear all posts
+ * @param {Function} done Callback to be invoked when done.
+ */
+function clearAllPosts(done) {
+  Post.remove().exec().then(() => {
+    done();
   });
+}
 
-  afterEach(done => {
-    // Clear all posts
-    Post.remove().exec().then(() => {
-      done();
-    });
-  });
-
-  var newPost = {
-    title: 'Testing Post',
-    seoTitle: 'testing-post',
-    author: user._id,
-    body: '<p>This is a testing post</p>',
-    state: 'Published'
-  };
+describe('Post API', function() {
+  before(done => createAdmin(done));
+  before(done => clearAllPosts(done));
+  afterEach(done => clearAllPosts(done));
 
   it('should add new post to the database', done => {
     request(app)
@@ -129,78 +131,6 @@ describe('Post API', function() {
     }
   });
 
-  it('should be able to post a comment', done => {
-    Post.create(newPost, (err, post) => {
-      if (err) { throw err.message; }
-      postComent(post.seoTitle);
-    });
-
-    function postComent(postSeoTitle) {
-      var comment = {
-        body: 'Hey, Tests are awesome',
-        author: {
-          name: 'Tester',
-          email: 'testing@awesome.com'
-        },
-        isReply: false
-      };
-
-      request(app)
-        .post('/api/posts/' + postSeoTitle + '/comment')
-        .send(comment)
-        .expect('Content-Type', /json/)
-        .expect(201, done);
-    }
-  });
-
-  it('should return not accept a comment without email', done => {
-    Post.create(newPost, (err, post) => {
-      if (err) { throw err.message; }
-      postComentWithoutEmail(post.seoTitle);
-    });
-
-    function postComentWithoutEmail(postSeoTitle) {
-      var comment = {
-        body: 'Hey, Tests are awesome',
-        author: {
-          name: '', // left blank
-          email: 'testing@awesome.com'
-        },
-        isReply: false
-      };
-
-      request(app)
-        .post('/api/posts/' + postSeoTitle + '/comment')
-        .send(comment)
-        .expect('Content-Type', /json/)
-        .expect(500, done);
-    }
-  });
-
-  it('should return not accept a comment when commenter has no name', done => {
-    Post.create(newPost, (err, post) => {
-      if (err) { throw err.message; }
-      postComentWithoutName(post.seoTitle);
-    });
-
-    function postComentWithoutName(postSeoTitle) {
-      var comment = {
-        body: 'Hey, Tests are awesome',
-        author: {
-          name: 'Tester',
-          email: '' // left blank
-        },
-        isReply: false
-      };
-
-      request(app)
-        .post('/api/posts/' + postSeoTitle + '/comment')
-        .send(comment)
-        .expect('Content-Type', /json/)
-        .expect(500, done);
-    }
-  });
-
   it('should respond with JSON array', done => {
     request(app)
       .get('/api/posts')
@@ -231,5 +161,91 @@ describe('Post API', function() {
         done();
       });
   });
+
+});
+
+describe('Post comments API', () => {
+  before(done => createAdmin(done));
+  before(done => clearAllPosts(done));
+  afterEach(done => clearAllPosts(done));
+
+  /**
+   * Add testing post for comments
+   * @param {Function} done Callback
+   * @returns {Promise} Promise with created post
+   */
+  function addTestingPost() {
+    return new Promise(function(resolve) {
+      Post.create(newPost, (err, post) => {
+        if (err) { throw err.message; }
+        resolve(post);
+      });
+    });
+  }
+
+  it('should be able to post a comment', done => {
+    addTestingPost().then(post => {
+      let comment = {
+        body: 'Hey, Tests are awesome',
+        author: {
+          name: 'Tester',
+          email: 'testing@awesome.com'
+        },
+        isReply: false
+      };
+
+      request(app)
+        .post('/api/posts/' + post.seoTitle + '/comment')
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(201, done);
+    });
+  });
+
+  it('should return not accept a comment without email', done => {
+    addTestingPost().then(post => {
+      let comment = {
+        body: 'Hey, Tests are awesome',
+        author: {
+          name: '', // left blank
+
+          email: 'testing@awesome.com'
+        },
+        isReply: false
+      };
+
+      request(app)
+        .post('/api/posts/' + post.seoTitle + '/comment')
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(500, done);
+    });
+  });
+
+  it('should return not accept a comment when commenter has no name', done => {
+    addTestingPost().then(post => {
+      var comment = {
+        body: 'Hey, Tests are awesome',
+        author: {
+          name: 'Tester',
+          email: '' // left blank
+        },
+        isReply: false
+      };
+
+      request(app)
+        .post('/api/posts/' + post.seoTitle + '/comment')
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(500, done);
+    });
+  });
+
+  it('should be able to remove a comment', done => {
+    //TODO
+    done();
+  });
+
+  it('should be able to edit a comment')
 
 });
