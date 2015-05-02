@@ -111,7 +111,7 @@ exports.update = function(req, res) {
 
 // Deletes a post from the DB.
 exports.destroy = function(req, res) {
-  Post.findById(req.params.id, function (err, post) {
+  singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.send(404); }
     post.remove(function(err) {

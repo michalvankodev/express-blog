@@ -1,11 +1,13 @@
 'use strict';
 
-import * as should from 'should';
+import chai from 'chai';
 import _ from 'lodash';
 import app from '../../app';
 import request from 'supertest';
 import Post from './post.model.js';
 import User from '../user/user.model';
+chai.should();
+var expect = chai.expect;
 
 var user = new User({
   username: 'fakeuser',
@@ -63,39 +65,41 @@ describe('Post API', function() {
   before(done => clearAllPosts(done));
   afterEach(done => clearAllPosts(done));
 
-  it('should add new post to the database', done => {
-    request(app)
-      .post('/api/posts')
-      .set('authorization', 'Bearer ' + userToken)
-      .send(newPost)
-      .expect('Content-Type', /json/)
-      .expect(201, checkDatabase);
+  /**
+   * Add post as an admin with Bearer token
+   *
+   * @param {Object} Post that should be added
+   * @returns {Promise}
+   */
+  function addPostAsAdmin(post) {
+    return new Promise(resolve => {
+      request(app)
+        .post('/api/posts')
+        .set('authorization', 'Bearer ' + userToken)
+        .send(post)
+        .expect('Content-Type', /json/)
+        .expect(201, resolve);
+    });
+  }
 
-    function checkDatabase() {
+  it('should add new post to the database', done => {
+    addPostAsAdmin(newPost).then(function checkDatabase() {
       Post.find({}, (err, posts) => {
         posts.should.have.length(1);
         done();
       });
-    }
+    });
   });
 
   it('should not add post with the same seoTitle to the database', done => {
-    // Add first post. Should be able to add
-    request(app)
-      .post('/api/posts')
-      .set('authorization', 'Bearer ' + userToken)
-      .send(newPost)
-      .expect('Content-Type', /json/)
-      .expect(201, addSecond);
-
-    function addSecond() {
+    // Add first post.
+    addPostAsAdmin(newPost).then(function addSecond() {
       request(app)
         .post('/api/posts')
         .set('authorization', 'Bearer ' + userToken)
         .send(newPost) // Same post
         .expect(500, done); // Server Error
-    }
-
+    });
   });
 
   it('should reject post without a title', done => {
@@ -111,14 +115,7 @@ describe('Post API', function() {
 
   it('should respond with a single post', done => {
     // Add post. Should be able to add
-    request(app)
-      .post('/api/posts')
-      .set('authorization', 'Bearer ' + userToken)
-      .send(newPost)
-      .expect('Content-Type', /json/)
-      .expect(201, getPost);
-
-    function getPost() {
+    addPostAsAdmin(newPost).then(function getPost() {
       request(app)
         .get('/api/posts/' + newPost.seoTitle)
         .expect(200)
@@ -128,7 +125,7 @@ describe('Post API', function() {
           res.body.should.be.json;
           done();
         });
-    }
+    });
   });
 
   it('should respond with JSON array', done => {
@@ -162,6 +159,67 @@ describe('Post API', function() {
       });
   });
 
+  it('should be able to remove a post', done => {
+    addPostAsAdmin(newPost).then(function removePost() {
+      request(app)
+        .delete('/api/posts/' + newPost.seoTitle)
+        .set('authorization', 'Bearer ' + userToken)
+        .expect(204, checkDatabase);
+
+        function checkDatabase() {
+          Post.find({}, (err, posts) => {
+            posts.should.have.length(0);
+            done();
+          });
+        }
+    });
+  });
+
+  it('should be able to edit a post', done => {
+    addPostAsAdmin(newPost).then(function editPost() {
+      let editedPost = {
+        title: 'Testing edited Post',
+        seoTitle: 'testing-edited-post',
+        author: user._id,
+        body: '<p>This is a testing of edited post</p>'
+      };
+
+      request(app)
+        .patch('/api/posts/' + newPost.seoTitle)
+        .set('authorization', 'Bearer ' + userToken)
+        .send(editedPost)
+        .expect(200, checkDatabase);
+
+      function checkDatabase() {
+        Post.findOne({seoTitle: editedPost.seoTitle}, (err, post) => {
+          if (err) { return done(err); }
+
+          expect(post).to.exist;
+          post.title.should.be.equal(editedPost.title);
+          post.seoTitle.should.be.equal(editedPost.seoTitle);
+          post.body.should.be.equal(editedPost.body);
+          post.state.should.be.equal(newPost.state, 'should contain unchanged properties');
+          done();
+        });
+      }
+    });
+  });
+
+  it('should not be able to remove post when not authorized', done => {
+    addPostAsAdmin(newPost).then(function removePost() {
+      request(app)
+        .delete('/api/posts/' + newPost.seoTitle)
+        .expect(401, done);
+    });
+  });
+
+  it('should not be able to edit post when not authorized', done => {
+    addPostAsAdmin(newPost).then(function removePost() {
+      request(app)
+        .patch('/api/posts/' + newPost.seoTitle)
+        .expect(401, done);
+    });
+  });
 });
 
 describe('Post comments API', () => {
@@ -246,6 +304,6 @@ describe('Post comments API', () => {
     done();
   });
 
-  it('should be able to edit a comment')
+  it('should be able to edit a comment');
 
 });
