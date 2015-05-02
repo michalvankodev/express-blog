@@ -1,10 +1,10 @@
 'use strict';
 
 import reportError from '../error-reporter';
-var _ = require('lodash');
-var Post = require('./post.model');
-var QueryParser = require('../queryparser.js');
-var isNumeric = require('isnumeric');
+import _ from 'lodash';
+import Post from './post.model';
+import QueryParser from '../queryparser.js';
+import isNumeric from 'isnumeric';
 import auth from '../../auth/auth.service';
 
 /**
@@ -140,6 +140,9 @@ exports.addComment = function(req, res) {
   });
 };
 
+/**
+ * Edit comment by comment ID
+ */
 exports.editComment = function(req, res) {
   if (req.body._id) { delete req.body._id; }
 
@@ -160,6 +163,9 @@ exports.editComment = function(req, res) {
   });
 };
 
+/**
+ * Delete comment by its ID
+ */
 exports.destroyComment = function(req, res) {
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }

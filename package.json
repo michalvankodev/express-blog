@@ -43,12 +43,16 @@
     "chai-as-promised": "*",
     "del": "*",
     "gulp": "*",
+    "gulp-babel": "^5.1.0",
+    "gulp-jsdoc": "^0.1.4",
     "gulp-jshint": "*",
     "gulp-nodemon": "*",
     "gulp-spawn-mocha": "*",
     "jshint-stylish": "*",
     "mocha": "*",
     "require-dir": "^0.3.0",
+    "run-sequence": "^1.1.0",
+    "shelljs": "^0.4.0",
     "should": "*",
     "supertest": "*"
   }
