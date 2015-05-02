@@ -13,6 +13,9 @@ router.patch('/:id', auth.hasRole('admin'), controller.update);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
 // Comments
-router.post('/:id/comment', controller.comment); // :id can be a seoTitle as well
+router.post('/:id/comment', controller.addComment); // :id can be a seoTitle as well
+router.delete('/:id/comment/:commentId', auth.hasRole('admin'), controller.destroyComment);
+router.put('/:id/comment/:commentId', auth.hasRole('admin'), controller.editComment);
+router.patch('/:id/comment/:commentId', auth.hasRole('admin'), controller.editComment);
 
 module.exports = router;

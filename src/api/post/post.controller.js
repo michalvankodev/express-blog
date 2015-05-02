@@ -86,7 +86,7 @@ exports.create = function(req, res) {
   newPost.lastUpdated = Date.now();
 
   Post.create(newPost, function(err, post) {
-    if (err) { return res.status(500).json(reportError(err)); }
+    if (err) { return res.status(400).json(reportError(err)); }
     return res.status(201).json(post);
   });
 };
@@ -103,7 +103,7 @@ exports.update = function(req, res) {
     updated.lastUpdated = Date.now();
 
     updated.save((err, post) => {
-      if (err) { return res.status(500).json(reportError(err)); }
+      if (err) { return res.status(400).json(reportError(err)); }
       return res.status(200).json(post);
     });
   });
@@ -115,7 +115,7 @@ exports.destroy = function(req, res) {
     if (err) { return res.status(500).json(reportError(err)); }
     if(!post) { return res.send(404); }
     post.remove(function(err) {
-      if(err) { return res.status(500).json(reportError(err)); }
+      if(err) { return res.status(400).json(reportError(err)); }
       return res.send(204);
     });
   });
@@ -124,7 +124,7 @@ exports.destroy = function(req, res) {
 /**
 * Adds new comment to the post
 */
-exports.comment = function (req, res) {
+exports.addComment = function(req, res) {
   var comment = req.body;
   comment.date = Date.now();
 
@@ -133,11 +133,35 @@ exports.comment = function (req, res) {
     if (!post) { return res.status(404).json({ message: 'Post does not exist'}); }
     post.comments.push(comment);
     post.save((err, post) => {
-      if (err) { return res.status(500).json(reportError(err)); }
+      if (err) { return res.status(400).json(reportError(err)); }
       return res.status(201).json(post);
     });
 
   });
+};
+
+exports.editComment = function(req, res) {
+  if (req.body._id) { delete req.body._id; }
+
+  // get post
+  singlePostQuery(req.params.id).exec((err, post) => {
+    if (err) { return res.status(500).json(reportError(err)); }
+    if(!post) { return res.send(404); }
+
+    // get comment
+    let comment = post.comments.id(req.params.commentId);
+
+    _.merge(comment, req.body);
+
+    post.save((err, post) => {
+      if (err) { return res.status(400).json(reportError(err)); }
+      return res.status(200).json(post);
+    });
+  });
+};
+
+exports.destroyComment = function(req, res) {
+
 };
 
 Post.on('error', function(err) {

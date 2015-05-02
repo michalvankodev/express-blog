@@ -9,18 +9,17 @@ import User from '../user/user.model';
 chai.should();
 var expect = chai.expect;
 
-var user = new User({
+var user = {
   username: 'fakeuser',
   email: 'test@test.com',
   password: 'password',
   role: 'admin'
-});
+};
 var userToken;
 
 var newPost = {
   title: 'Testing Post',
   seoTitle: 'testing-post',
-  author: user._id,
   body: '<p>This is a testing post</p>',
   state: 'Published'
 };
@@ -32,21 +31,45 @@ var newPost = {
 function createAdmin(done) {
   User.remove().exec().then(() => {
     // Create user
-    user.save(() => {
+    new User(user).save((err, user) => {
+      if (err) return done(err);
       // Get auth token for user
       var credentials = {
         'username' : user.username,
         'password' : user.password
       };
+
       request(app)
         .post('/auth')
         .send(credentials)
-        .expect(201)
+        .expect(200)
         .end((err, res) => {
+          if (err) return done(err);
           userToken = res.body.token;
           done();
       });
     });
+  });
+}
+
+/**
+ * Add post as an admin with Bearer token
+ *
+ * @param {Object} Post that should be added
+ * @returns {Promise}
+ */
+function addPostAsAdmin(post) {
+  return new Promise(resolve => {
+    request(app)
+      .post('/api/posts')
+      .set('authorization', 'Bearer ' + userToken)
+      .send(post)
+      .expect('Content-Type', /json/)
+      .expect(201)
+      .end(err => {
+        if (err) throw err.message;
+        resolve();
+      });
   });
 }
 
@@ -65,23 +88,6 @@ describe('Post API', function() {
   before(done => clearAllPosts(done));
   afterEach(done => clearAllPosts(done));
 
-  /**
-   * Add post as an admin with Bearer token
-   *
-   * @param {Object} Post that should be added
-   * @returns {Promise}
-   */
-  function addPostAsAdmin(post) {
-    return new Promise(resolve => {
-      request(app)
-        .post('/api/posts')
-        .set('authorization', 'Bearer ' + userToken)
-        .send(post)
-        .expect('Content-Type', /json/)
-        .expect(201, resolve);
-    });
-  }
-
   it('should add new post to the database', done => {
     addPostAsAdmin(newPost).then(function checkDatabase() {
       Post.find({}, (err, posts) => {
@@ -98,7 +104,7 @@ describe('Post API', function() {
         .post('/api/posts')
         .set('authorization', 'Bearer ' + userToken)
         .send(newPost) // Same post
-        .expect(500, done); // Server Error
+        .expect(400, done); // Validation Error
     });
   });
 
@@ -110,7 +116,7 @@ describe('Post API', function() {
       .post('/api/posts')
       .set('authorization', 'Bearer ' + userToken)
       .send(postWithoutTitle)
-      .expect(500, done);
+      .expect(400, done);
   });
 
   it('should respond with a single post', done => {
@@ -164,9 +170,10 @@ describe('Post API', function() {
       request(app)
         .delete('/api/posts/' + newPost.seoTitle)
         .set('authorization', 'Bearer ' + userToken)
-        .expect(204, checkDatabase);
+        .expect(200, checkDatabase);
 
-        function checkDatabase() {
+        function checkDatabase(err) {
+          if (err) return done(err) ;
           Post.find({}, (err, posts) => {
             posts.should.have.length(0);
             done();
@@ -180,7 +187,6 @@ describe('Post API', function() {
       let editedPost = {
         title: 'Testing edited Post',
         seoTitle: 'testing-edited-post',
-        author: user._id,
         body: '<p>This is a testing of edited post</p>'
       };
 
@@ -190,9 +196,11 @@ describe('Post API', function() {
         .send(editedPost)
         .expect(200, checkDatabase);
 
-      function checkDatabase() {
+      function checkDatabase(err) {
+        if (err) return done(err);
+
         Post.findOne({seoTitle: editedPost.seoTitle}, (err, post) => {
-          if (err) { return done(err); }
+          if (err) return done(err);
 
           expect(post).to.exist;
           post.title.should.be.equal(editedPost.title);
@@ -227,22 +235,23 @@ describe('Post comments API', () => {
   before(done => clearAllPosts(done));
   afterEach(done => clearAllPosts(done));
 
-  /**
-   * Add testing post for comments
-   * @param {Function} done Callback
-   * @returns {Promise} Promise with created post
-   */
-  function addTestingPost() {
-    return new Promise(function(resolve) {
-      Post.create(newPost, (err, post) => {
-        if (err) { throw err.message; }
-        resolve(post);
+
+  function findCommentId(comment) {
+    return new Promise(function (resolve) {
+      Post.findOne({ 'comments.author.name': comment.author.name })
+        .exec((err, post) => {
+          if (err) return done(err);
+          let commentId = post.comments.filter(c => {
+            return c.author.name === comment.author.name;
+          }).pop()._id;
+
+          resolve(commentId);
       });
     });
   }
 
   it('should be able to post a comment', done => {
-    addTestingPost().then(post => {
+    addPostAsAdmin(newPost).then(() => {
       let comment = {
         body: 'Hey, Tests are awesome',
         author: {
@@ -253,7 +262,7 @@ describe('Post comments API', () => {
       };
 
       request(app)
-        .post('/api/posts/' + post.seoTitle + '/comment')
+        .post(`/api/posts/${newPost.seoTitle}/comment`)
         .send(comment)
         .expect('Content-Type', /json/)
         .expect(201, done);
@@ -261,28 +270,27 @@ describe('Post comments API', () => {
   });
 
   it('should return not accept a comment without email', done => {
-    addTestingPost().then(post => {
+    addPostAsAdmin(newPost).then(() => {
       let comment = {
         body: 'Hey, Tests are awesome',
         author: {
           name: '', // left blank
-
           email: 'testing@awesome.com'
         },
         isReply: false
       };
 
       request(app)
-        .post('/api/posts/' + post.seoTitle + '/comment')
+        .post(`/api/posts/${newPost.seoTitle}/comment`)
         .send(comment)
         .expect('Content-Type', /json/)
-        .expect(500, done);
+        .expect(400, done);
     });
   });
 
-  it('should return not accept a comment when commenter has no name', done => {
-    addTestingPost().then(post => {
-      var comment = {
+  it('should not accept a comment when commenter has no name', done => {
+    addPostAsAdmin(newPost).then(() => {
+      let comment = {
         body: 'Hey, Tests are awesome',
         author: {
           name: 'Tester',
@@ -292,18 +300,107 @@ describe('Post comments API', () => {
       };
 
       request(app)
-        .post('/api/posts/' + post.seoTitle + '/comment')
+        .post(`/api/posts/${newPost.seoTitle}/comment`)
         .send(comment)
         .expect('Content-Type', /json/)
-        .expect(500, done);
+        .expect(400, done);
     });
   });
 
   it('should be able to remove a comment', done => {
-    //TODO
-    done();
+    addPostAsAdmin(newPost).then(function addComment(post) {
+      let comment = {
+        body: 'Hey, Tests are awesome',
+        author: {
+          name: 'Tester',
+          email: 'testing@awesome.com'
+        },
+        isReply: false
+      };
+
+      request(app)
+        .post(`/api/posts/${newPost.seoTitle}/comment`)
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(200, removeComment);
+
+      function removeComment(err) {
+        if (err) return done(err);
+        // get comment id
+        let commentId;
+
+        Post.findOne({ 'comments.author.name': comment.author.name })
+          .exec((err, post) => {
+            if (err) { return done(err); }
+            commentId = post.comments.filter(c => {
+              return c.author.name === comment.author.name;
+            }).pop()._id;
+            removeUnauthorized();
+          });
+
+        function removeUnauthorized() {
+          // Try unauthorized
+          request(app)
+            .delete(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
+            .expect(401, removeAuthorized);
+        }
+
+        function removeAuthorized() {
+          request(app)
+            .delete(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
+            .set('authorization', 'Bearer ' + userToken)
+            .expect(204, done);
+        }
+      }
+    });
   });
 
-  it('should be able to edit a comment');
+  it('should be able to edit a comment', done => {
+    let comment = {
+      body: 'Hey, Tests are awesome',
+      author: {
+        name: 'Tester',
+        email: 'testing@awesome.com'
+      },
+      isReply: false
+    };
+
+    let editedComment = {
+      body: 'edited comment'
+    };
+
+    let commentId;
+
+    addPostAsAdmin(newPost).then(() => {
+      request(app)
+        .post(`/api/posts/${newPost.seoTitle}/comment`)
+        .send(comment)
+        .expect('Content-Type', /json/)
+        .expect(201, editCommentUnauthorized);
+    });
+
+    function editCommentUnauthorized(err, res) {
+      if (err) return done(err);
+      commentId = findCommentId(comment);
+      request(app)
+        .patch(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
+        .send(editedComment)
+        .expect(401, (err) => {
+          if (err) return done(err);
+          editCommentAuthorized(commentId);
+        });
+    }
+
+    function editCommentAuthorized(commentId) {
+      request(app)
+        .patch(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
+        .set('authorization', 'Bearer ' + userToken)
+        .send(editedComment)
+        .expect(200, err => {
+          if (err) return done(err);
+          done();
+        });
+    }
+  });
 
 });
