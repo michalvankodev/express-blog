@@ -97,7 +97,7 @@ exports.update = function(req, res) {
 
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.send(404); }
+    if(!post) { return res.sendStatus(404); }
 
     var updated = _.merge(post, req.body);
     updated.lastUpdated = Date.now();
@@ -113,10 +113,10 @@ exports.update = function(req, res) {
 exports.destroy = function(req, res) {
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.send(404); }
+    if(!post) { return res.sendStatus(404); }
     post.remove(function(err) {
       if(err) { return res.status(400).json(reportError(err)); }
-      return res.send(204);
+      return res.sendStatus(200);
     });
   });
 };
@@ -146,11 +146,11 @@ exports.editComment = function(req, res) {
   // get post
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.send(404); }
+    if(!post) { return res.sendStatus(404); }
 
     // get comment
     let comment = post.comments.id(req.params.commentId);
-
+    if (!comment) { return res.sendStatus(404); }
     _.merge(comment, req.body);
 
     post.save((err, post) => {
@@ -161,7 +161,20 @@ exports.editComment = function(req, res) {
 };
 
 exports.destroyComment = function(req, res) {
+  singlePostQuery(req.params.id).exec((err, post) => {
+    if (err) { return res.status(500).json(reportError(err)); }
+    if(!post) { return res.sendStatus(404); }
 
+    // get comment
+    let comment = post.comments.id(req.params.commentId);
+    if (!comment) { return res.sendStatus(404); }
+    comment.remove();
+
+    post.save((err, post) => {
+      if (err) { return res.status(400).json(reportError(err)); }
+      return res.status(200).json(post);
+    });
+  })
 };
 
 Post.on('error', function(err) {

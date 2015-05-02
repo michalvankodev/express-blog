@@ -308,51 +308,44 @@ describe('Post comments API', () => {
   });
 
   it('should be able to remove a comment', done => {
+    let comment = {
+      body: 'Hey, Tests are awesome',
+      author: {
+        name: 'Tester',
+        email: 'testing@awesome.com'
+      },
+      isReply: false
+    };
+    
     addPostAsAdmin(newPost).then(function addComment(post) {
-      let comment = {
-        body: 'Hey, Tests are awesome',
-        author: {
-          name: 'Tester',
-          email: 'testing@awesome.com'
-        },
-        isReply: false
-      };
-
       request(app)
         .post(`/api/posts/${newPost.seoTitle}/comment`)
         .send(comment)
         .expect('Content-Type', /json/)
-        .expect(200, removeComment);
+        .expect(201, removeCommentUnauthorized);
+      });
 
-      function removeComment(err) {
-        if (err) return done(err);
-        // get comment id
-        let commentId;
-
-        Post.findOne({ 'comments.author.name': comment.author.name })
-          .exec((err, post) => {
-            if (err) { return done(err); }
-            commentId = post.comments.filter(c => {
-              return c.author.name === comment.author.name;
-            }).pop()._id;
-            removeUnauthorized();
+    function removeCommentUnauthorized(err) {
+      if (err) return done(err);
+      // get comment id
+      findCommentId(comment).then(commentId => {
+        // Try unauthorized
+        request(app)
+          .delete(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
+          .expect(401)
+          .end((err) => {
+            if (err) return done(err);
+            removeCommentAuthorized(commentId);
           });
+      });
+    }
 
-        function removeUnauthorized() {
-          // Try unauthorized
-          request(app)
-            .delete(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
-            .expect(401, removeAuthorized);
-        }
-
-        function removeAuthorized() {
-          request(app)
-            .delete(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
-            .set('authorization', 'Bearer ' + userToken)
-            .expect(204, done);
-        }
-      }
-    });
+    function removeCommentAuthorized(commentId) {
+      request(app)
+        .delete(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
+        .set('authorization', 'Bearer ' + userToken)
+        .expect(200, done);
+    }
   });
 
   it('should be able to edit a comment', done => {
@@ -381,14 +374,15 @@ describe('Post comments API', () => {
 
     function editCommentUnauthorized(err, res) {
       if (err) return done(err);
-      commentId = findCommentId(comment);
-      request(app)
-        .patch(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
-        .send(editedComment)
-        .expect(401, (err) => {
-          if (err) return done(err);
-          editCommentAuthorized(commentId);
-        });
+      findCommentId(comment).then(commentId => {
+        request(app)
+          .patch(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
+          .send(editedComment)
+          .expect(401, (err) => {
+            if (err) return done(err);
+            editCommentAuthorized(commentId);
+          });
+      });
     }
 
     function editCommentAuthorized(commentId) {
@@ -398,8 +392,16 @@ describe('Post comments API', () => {
         .send(editedComment)
         .expect(200, err => {
           if (err) return done(err);
-          done();
+          checkDatabase();
         });
+    }
+
+    function checkDatabase() {
+      Post.find({}, (err, post) => {
+        if (err) return done(err);
+        post[0].comments[0].body.should.equal(editedComment.body);
+        done();
+      });
     }
   });
 
