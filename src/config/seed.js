@@ -3,7 +3,8 @@
  * to disable, edit config/environment/index.js, and set `seedDB: false`
  */
 
-var User = require('../api/user/user.model');
+import User from '../api/user/user.model';
+import logger from '../components/logger';
 
 User.find({}).remove(function() {
   User.create({
@@ -20,7 +21,7 @@ User.find({}).remove(function() {
     email: 'admin@admin.com',
     password: 'admin'
   }, function() {
-      console.log('finished populating users');
+      logger.info('finished populating users');
     }
   );
 });

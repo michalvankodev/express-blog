@@ -5,10 +5,11 @@
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-var express = require('express');
-var mongoose = require('mongoose');
-var config = require('./config/environment');
-var bodyParser = require('body-parser');
+import express from 'express';
+import mongoose from 'mongoose';
+import config from './config/environment';
+import bodyParser from 'body-parser';
+import logger from './components/logger';
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
@@ -26,8 +27,7 @@ app.use(bodyParser.json());
 
 // Start server
 server.listen(config.port, config.ip, function () {
-// TODO use logger
-  console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
+  logger.info(`Express server listening on ${config.port}, in ${app.get('env')} mode`);
 });
 
 // Expose app

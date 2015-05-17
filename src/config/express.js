@@ -2,32 +2,31 @@
  * Express configuration
  */
 
-var express = require('express');
-var morgan = require('morgan');
-var compression = require('compression');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override');
-var errorHandler = require('errorhandler');
-var path = require('path');
-var config = require('./environment');
-var winston = require('winston');
+import express from 'express';
+import morgan from 'morgan';
+import compression from 'compression';
+import bodyParser from 'body-parser';
+import methodOverride from 'method-override';
+import errorHandler from 'errorhandler';
+import path from 'path';
+import config from './environment';
+import logger from '../components/logger';
 
-module.exports = function(app) {
+export default function(app) {
   var env = app.get('env');
 
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(methodOverride());
-  // TODO add logger
-  //app.use(morgan('dev', {'stream': winston.log }));
 
   if (env === 'production') {
-    // pass
+    app.use(morgan('combined', {'stream': logger.stream }));
   }
 
-  if (env === 'development' || env === 'test') {
+  if (env === 'development') {
+    app.use(morgan('dev', {'stream': logger.stream }));
     app.use(express.static(path.join(config.root, '.tmp')));
     app.use(errorHandler()); // Error handler - has to be last
   }
-};
+}
