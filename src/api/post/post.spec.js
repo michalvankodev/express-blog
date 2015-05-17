@@ -140,7 +140,8 @@ describe('Post API', function() {
       .expect('Content-Type', /json/)
       .end((err, res) => {
         if (err) { return done(err); }
-        res.body.should.be.instanceof(Array);
+        res.body.results.should.be.instanceof(Array);
+        res.body.total.should.equal(0);
         done();
       });
   });
@@ -159,7 +160,7 @@ describe('Post API', function() {
       .expect('Content-Type', /json/)
       .end((err, res) => {
         if (err) { return done(err); }
-        res.body.should.be.instanceof(Array);
+        res.body.results.should.be.instanceof(Array);
         done();
       });
   });

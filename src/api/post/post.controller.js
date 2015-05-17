@@ -45,12 +45,19 @@ exports.index = function(req, res) {
 
   function returnPosts(err) {
     if (err) { return res.status(401).json(err.message); }
-
-    Post.find(conditions, null, options)
+    let posts = Post.find(conditions, null, options)
       .populate('author', '-salt -hashedPassword')
-      .exec((err, posts) => {
-        if (err) { return res.status(500).json(reportError(err)); }
-        return res.status(200).json(posts);
+      .exec();
+    let count = Post.count(conditions).exec();
+
+    Promise.all([posts, count]).then(results => {
+      let response = {
+        total: results[1],
+        results: results[0]
+      };
+      return res.status(200).json(response);
+    }, err => {
+      return res.status(500).json(reportError(err));
     });
   }
 };
