@@ -1,5 +1,3 @@
-'use strict';
-
 import reportError from '../error-reporter';
 import _ from 'lodash';
 import Post from './post.model';
@@ -18,7 +16,7 @@ function singlePostQuery(query) {
   if (isNumeric(query)) {
     post = Post.findById(query);
   } else {
-    post = Post.findOne({ 'seoTitle' : query });
+    post = Post.findOne({ 'seoTitle': query });
   }
   return post;
 }
@@ -46,12 +44,12 @@ exports.index = function(req, res) {
   }
 
   function returnPosts(err) {
-    if(err) { return res.status(401).json(err.message);}
+    if (err) { return res.status(401).json(err.message); }
 
     Post.find(conditions, null, options)
       .populate('author', '-salt -hashedPassword')
       .exec((err, posts) => {
-        if(err) { return res.status(500).json(reportError(err)); }
+        if (err) { return res.status(500).json(reportError(err)); }
         return res.status(200).json(posts);
     });
   }
@@ -66,8 +64,8 @@ exports.index = function(req, res) {
 exports.show = function(req, res) {
 
   var response = function (err, post) {
-    if(err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.status(404); }
+    if (err) { return res.status(500).json(reportError(err)); }
+    if (!post) { return res.status(404); }
 
     return res.json(post);
   };
@@ -97,7 +95,7 @@ exports.update = function(req, res) {
 
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.sendStatus(404); }
+    if (!post) { return res.sendStatus(404); }
 
     var updated = _.merge(post, req.body);
     updated.lastUpdated = Date.now();
@@ -113,9 +111,9 @@ exports.update = function(req, res) {
 exports.destroy = function(req, res) {
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.sendStatus(404); }
+    if (!post) { return res.sendStatus(404); }
     post.remove(function(err) {
-      if(err) { return res.status(400).json(reportError(err)); }
+      if (err) { return res.status(400).json(reportError(err)); }
       return res.sendStatus(200);
     });
   });
@@ -149,7 +147,7 @@ exports.editComment = function(req, res) {
   // get post
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.sendStatus(404); }
+    if (!post) { return res.sendStatus(404); }
 
     // get comment
     let comment = post.comments.id(req.params.commentId);
@@ -169,7 +167,7 @@ exports.editComment = function(req, res) {
 exports.destroyComment = function(req, res) {
   singlePostQuery(req.params.id).exec((err, post) => {
     if (err) { return res.status(500).json(reportError(err)); }
-    if(!post) { return res.sendStatus(404); }
+    if (!post) { return res.sendStatus(404); }
 
     // get comment
     let comment = post.comments.id(req.params.commentId);
@@ -180,7 +178,7 @@ exports.destroyComment = function(req, res) {
       if (err) { return res.status(400).json(reportError(err)); }
       return res.status(200).json(post);
     });
-  })
+  });
 };
 
 Post.on('error', function(err) {

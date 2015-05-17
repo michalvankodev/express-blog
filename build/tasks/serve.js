@@ -10,7 +10,7 @@ gulp.task('serve', ['lint'], function() {
     ext: 'js',
     nodeArgs: [''],
     execMap: {
-      'js' : 'babel-node'
+      'js': 'babel-node --use-strict'
     }
   });
 });

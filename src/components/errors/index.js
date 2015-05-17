@@ -1,8 +1,7 @@
 /**
  * Error responses
+ * TODO EDIT THIS FILE
  */
-
-'use strict';
 
 module.exports[404] = function pageNotFound(req, res) {
   var viewFilePath = '404';

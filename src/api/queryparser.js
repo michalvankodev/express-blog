@@ -1,5 +1,3 @@
-'use strict';
-
 import _ from 'lodash';
 
 var queryOptions = exports.queryOptions = ['sort', 'limit', 'skip'];

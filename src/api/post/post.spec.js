@@ -1,5 +1,3 @@
-'use strict';
-
 import chai from 'chai';
 import _ from 'lodash';
 import app from '../../app';
@@ -32,11 +30,11 @@ function createAdmin(done) {
   User.remove().exec().then(() => {
     // Create user
     new User(user).save((err, user) => {
-      if (err) return done(err);
+      if (err) { return done(err); }
       // Get auth token for user
       var credentials = {
-        'username' : user.username,
-        'password' : user.password
+        'username': user.username,
+        'password': user.password
       };
 
       request(app)
@@ -44,7 +42,7 @@ function createAdmin(done) {
         .send(credentials)
         .expect(200)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) { return done(err); }
           userToken = res.body.token;
           done();
       });
@@ -67,7 +65,7 @@ function addPostAsAdmin(post) {
       .expect('Content-Type', /json/)
       .expect(201)
       .end(err => {
-        if (err) throw err.message;
+        if (err) { throw err.message; }
         resolve();
       });
   });
@@ -91,6 +89,7 @@ describe('Post API', function() {
   it('should add new post to the database', done => {
     addPostAsAdmin(newPost).then(function checkDatabase() {
       Post.find({}, (err, posts) => {
+        if (err) { return done(err); }
         posts.should.have.length(1);
         done();
       });
@@ -127,7 +126,7 @@ describe('Post API', function() {
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) { return done(err); }
           res.body.should.be.json;
           done();
         });
@@ -140,7 +139,7 @@ describe('Post API', function() {
       .expect(200)
       .expect('Content-Type', /json/)
       .end((err, res) => {
-        if (err) return done(err);
+        if (err) { return done(err); }
         res.body.should.be.instanceof(Array);
         done();
       });
@@ -159,7 +158,7 @@ describe('Post API', function() {
       .expect(200)
       .expect('Content-Type', /json/)
       .end((err, res) => {
-        if (err) return done(err);
+        if (err) { return done(err); }
         res.body.should.be.instanceof(Array);
         done();
       });
@@ -173,8 +172,9 @@ describe('Post API', function() {
         .expect(200, checkDatabase);
 
         function checkDatabase(err) {
-          if (err) return done(err) ;
+          if (err) { return done(err); }
           Post.find({}, (err, posts) => {
+            if (err) { return done(err); }
             posts.should.have.length(0);
             done();
           });
@@ -197,10 +197,10 @@ describe('Post API', function() {
         .expect(200, checkDatabase);
 
       function checkDatabase(err) {
-        if (err) return done(err);
+        if (err) { return done(err); }
 
         Post.findOne({seoTitle: editedPost.seoTitle}, (err, post) => {
-          if (err) return done(err);
+          if (err) { return done(err); }
 
           expect(post).to.exist;
           post.title.should.be.equal(editedPost.title);
@@ -240,7 +240,7 @@ describe('Post comments API', () => {
     return new Promise(function (resolve) {
       Post.findOne({ 'comments.author.name': comment.author.name })
         .exec((err, post) => {
-          if (err) return done(err);
+          if (err) { throw err; }
           let commentId = post.comments.filter(c => {
             return c.author.name === comment.author.name;
           }).pop()._id;
@@ -316,7 +316,7 @@ describe('Post comments API', () => {
       },
       isReply: false
     };
-    
+
     addPostAsAdmin(newPost).then(function addComment(post) {
       request(app)
         .post(`/api/posts/${newPost.seoTitle}/comment`)
@@ -326,7 +326,7 @@ describe('Post comments API', () => {
       });
 
     function removeCommentUnauthorized(err) {
-      if (err) return done(err);
+      if (err) { return done(err); }
       // get comment id
       findCommentId(comment).then(commentId => {
         // Try unauthorized
@@ -334,7 +334,7 @@ describe('Post comments API', () => {
           .delete(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
           .expect(401)
           .end((err) => {
-            if (err) return done(err);
+            if (err) { return done(err); }
             removeCommentAuthorized(commentId);
           });
       });
@@ -362,8 +362,6 @@ describe('Post comments API', () => {
       body: 'edited comment'
     };
 
-    let commentId;
-
     addPostAsAdmin(newPost).then(() => {
       request(app)
         .post(`/api/posts/${newPost.seoTitle}/comment`)
@@ -373,13 +371,13 @@ describe('Post comments API', () => {
     });
 
     function editCommentUnauthorized(err, res) {
-      if (err) return done(err);
+      if (err) { return done(err); }
       findCommentId(comment).then(commentId => {
         request(app)
           .patch(`/api/posts/${newPost.seoTitle}/comment/${commentId}`)
           .send(editedComment)
           .expect(401, (err) => {
-            if (err) return done(err);
+            if (err) { return done(err); }
             editCommentAuthorized(commentId);
           });
       });
@@ -391,14 +389,14 @@ describe('Post comments API', () => {
         .set('authorization', 'Bearer ' + userToken)
         .send(editedComment)
         .expect(200, err => {
-          if (err) return done(err);
+          if (err) { return done(err); }
           checkDatabase();
         });
     }
 
     function checkDatabase() {
       Post.find({}, (err, post) => {
-        if (err) return done(err);
+        if (err) { return done(err); }
         post[0].comments[0].body.should.equal(editedComment.body);
         done();
       });

@@ -1,7 +1,6 @@
-'use strict';
+import mongoose from 'mongoose';
 
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+var Schema = mongoose.Schema;
 
 var PostSchema = new Schema({
   title: { type: String, required: 'Title is required' },
@@ -20,7 +19,7 @@ var PostSchema = new Schema({
     isReply: Boolean
   }],
 
-  state: { type: String, enum: ['Draft','Published'], default: 'Draft'}
+  state: { type: String, enum: ['Draft', 'Published'], default: 'Draft'}
 });
 
-module.exports = mongoose.model('Post', PostSchema);
+export default mongoose.model('Post', PostSchema);

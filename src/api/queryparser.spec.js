@@ -1,5 +1,3 @@
-'use strict';
-
 import chai from 'chai';
 import QueryParser from './queryparser';
 chai.should();
@@ -12,7 +10,7 @@ var defaultConditions = {
 
 var defaultOptions = {
   limit: 10,
-  sort: 'createdDate',
+  sort: 'createdDate'
 };
 
 
@@ -66,7 +64,7 @@ describe('QueryParser', () => {
     let expectedOptions = {
       sort: '-field',
       limit: '20'
-    }
+    };
 
     let options = QueryParser.getOptions(query, defaultOptions);
     options.should.eql(expectedOptions);

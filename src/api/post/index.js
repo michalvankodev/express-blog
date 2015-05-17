@@ -1,9 +1,8 @@
-'use strict';
+import express from 'express';
+import controller from './post.controller';
+import auth from '../../auth/auth.service';
 
-var express = require('express');
-var controller = require('./post.controller');
-var auth = require('../../auth/auth.service');
-var router = express.Router();
+var router = new express.Router();
 
 router.get('/', controller.index);
 router.get('/:id', controller.show);  // This can be a seoTitle as well
@@ -18,4 +17,4 @@ router.delete('/:id/comment/:commentId', auth.hasRole('admin'), controller.destr
 router.put('/:id/comment/:commentId', auth.hasRole('admin'), controller.editComment);
 router.patch('/:id/comment/:commentId', auth.hasRole('admin'), controller.editComment);
 
-module.exports = router;
+export default router;

@@ -2,8 +2,6 @@
  * Main application file
  */
 
-'use strict';
-
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -16,7 +14,7 @@ var bodyParser = require('body-parser');
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
 // Populate DB with sample data
-if(config.seedDB) { require('./config/seed'); }
+if (config.seedDB) { require('./config/seed'); }
 
 // Setup server
 var app = express();
@@ -28,6 +26,7 @@ app.use(bodyParser.json());
 
 // Start server
 server.listen(config.port, config.ip, function () {
+// TODO use logger
   console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
 });
 
