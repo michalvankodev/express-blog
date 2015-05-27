@@ -17,6 +17,15 @@ module.exports = {
     uri:    process.env.MONGOLAB_URI ||
             process.env.MONGOHQ_URL ||
             process.env.OPENSHIFT_MONGODB_DB_URL + process.env.OPENSHIFT_APP_NAME ||
-            'mongodb://localhost/gigup'
+            'mongodb://localhost/michalBlog'
+  },
+
+  corsOptions: {
+    origin: function(origin, callback){
+      const whitelist = ['http://localhost:9000'];
+
+      var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+      callback(null, originIsWhitelisted);
+    }
   }
 };

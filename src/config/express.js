@@ -11,9 +11,15 @@ import errorHandler from 'errorhandler';
 import path from 'path';
 import config from './environment';
 import logger from '../components/logger';
+import cors from 'cors';
 
 export default function(app) {
   var env = app.get('env');
+
+  if (config.corsOptions) {
+    app.use(cors(config.corsOptions));
+    logger.info(`CORS enabled`);
+  }
 
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));

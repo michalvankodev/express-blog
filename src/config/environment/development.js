@@ -6,5 +6,14 @@ module.exports = {
     uri: 'mongodb://localhost/michalBlog'
   },
 
-  seedDB: true
+  seedDB: true,
+
+  corsOptions: {
+    origin: function(origin, callback){
+      const whitelist = ['http://localhost:9000'];
+
+      var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+      callback(null, originIsWhitelisted);
+    }
+  }
 };
