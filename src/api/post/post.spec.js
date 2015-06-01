@@ -404,4 +404,8 @@ describe('Post comments API', () => {
     }
   });
 
+  it('should show latest comments');
+
+  it('should not show latest comments for drafts');
+
 });

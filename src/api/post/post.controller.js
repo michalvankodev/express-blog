@@ -4,6 +4,7 @@ import Post from './post.model';
 import QueryParser from '../queryparser.js';
 import isNumeric from 'isnumeric';
 import auth from '../../auth/auth.service';
+import logger from '../../components/logger';
 
 /**
  * Get single post by a query
@@ -186,6 +187,46 @@ exports.destroyComment = function(req, res) {
       return res.status(200).json(post);
     });
   });
+};
+
+/**
+ * Get all comments
+ */
+exports.getAllComments = function(req, res) {
+  let defaultConditions = {
+    state: 'Published'
+  };
+
+  let defaultOptions = {
+    limit: 10,
+    sort: '-comments.date'
+  };
+
+  let conditions = QueryParser.getConditions(req.query, defaultConditions);
+  let options = QueryParser.getOptions(req.query, defaultOptions);
+
+  if (conditions.state !== 'Published') {
+    auth.hasRole('admin')(req, res, returnPosts);
+  }
+  else {
+    returnPosts();
+  }
+
+  function returnPosts(err) {
+    if (err) { return res.status(401).json(err.message); }
+
+    let comments = Post.aggregate()
+      .match(conditions)
+      .unwind('comments')
+      .sort(options.sort)
+      .limit(parseInt(options.limit))
+      .exec()
+      .then(response => {
+        return res.status(200).json(response);
+      }, err => {
+        return res.status(500).json(reportError(err));
+      });
+  }
 };
 
 Post.on('error', function(err) {

@@ -4,6 +4,10 @@ import auth from '../../auth/auth.service';
 
 var router = new express.Router();
 
+
+// Get all comments
+router.get('/comments', controller.getAllComments);
+
 router.get('/', controller.index);
 router.get('/:id', controller.show);  // This can be a seoTitle as well
 router.post('/', auth.hasRole('admin'), controller.create);
