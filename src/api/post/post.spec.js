@@ -403,9 +403,85 @@ describe('Post comments API', () => {
       });
     }
   });
+});
 
-  it('should show latest comments');
+describe('Post all comments API', () => {
+  before(done => {
+    // Create Posts with comments
+    Post.remove().exec()
+      .then(() => {
+        return addPostAsAdmin(newPost);
+      }).then(() => {
+        newPost.title = 'Second Post';
+        newPost.seoTitle = 'second-post';
+        return addPostAsAdmin(newPost);
+      }).then(() => {
+        let comment1 = {
+          body: 'First testing comment that should be oldest',
+          isReply:  false,
+          date: '2013-06-01T14:43:21.692Z',
+          author: {
+              name: 'Tester',
+              email: 'testing@awesome.com'
+          }
+        };
 
-  it('should not show latest comments for drafts');
+        let comment2 = {
+          body: 'Second testing comment that should be in the middle',
+          isReply:  false,
+          date: '2014-06-01T14:43:21.692Z',
+          author: {
+              name: 'Tester',
+              email: 'testing@awesome.com'
+          }
+        };
+
+        let comment3 = {
+          body: 'Third testing comment that should be newest',
+          isReply:  false,
+          date: '2015-06-01T14:43:21.692Z',
+          author: {
+              name: 'Tester',
+              email: 'testing@awesome.com'
+          }
+        };
+
+        let firstPostAddition = Post.findOne({seoTitle: 'testing-post'}).exec((err, post) => {
+          if (err) { return done(err); }
+
+          post.comments.push(comment1, comment2);
+          return post.save();
+        });
+
+        let secondPostAddition = Post.findOne({seoTitle: 'second-post'}).exec((err, post) => {
+          if (err) { return done(err); }
+
+          post.comments.push(comment3);
+          return post.save();
+        });
+
+        return Promise.all([firstPostAddition, secondPostAddition]);
+      }).then(() => done());
+  });
+
+  after(done => {
+    Post.remove().exec().then(done());
+  });
+
+  it('should show all latest comments', done => {
+    request(app)
+      .get(`/api/posts/comments`)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((err, res) => {
+        if (err) { return done(err); }
+        res.body.results.should.be.instanceof(Array);
+        res.body.total.should.be.eql(3);
+        res.body.results[0].seoTitle.should.be.eql('second-post'); // test if the newest comment is on top
+        done();
+      });
+  });
+
+  it('should not show all latest comments for drafts when unauthorized');
 
 });

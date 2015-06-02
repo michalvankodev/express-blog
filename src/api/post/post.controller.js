@@ -215,17 +215,22 @@ exports.getAllComments = function(req, res) {
   function returnPosts(err) {
     if (err) { return res.status(401).json(err.message); }
 
-    let comments = Post.aggregate()
+    let results = Post.aggregate()
       .match(conditions)
       .unwind('comments')
       .sort(options.sort)
       .limit(parseInt(options.limit))
-      .exec()
-      .then(response => {
-        return res.status(200).json(response);
-      }, err => {
-        return res.status(500).json(reportError(err));
-      });
+      .exec();
+
+    let total = Post.aggregate()
+    .group({_id: null, count: {$sum: {$size: '$comments'}}})
+    .exec();
+
+    Promise.all([results, total]).then(response => {
+      return res.status(200).json({total: response[1][0].count, results: response[0]});
+    }, err => {
+      return res.status(500).json(reportError(err));
+    });
   }
 };
 
