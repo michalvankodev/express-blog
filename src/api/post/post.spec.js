@@ -406,6 +406,7 @@ describe('Post comments API', () => {
 });
 
 describe('Post all comments API', () => {
+  before(done => createAdmin(done));
   before(done => {
     // Create Posts with comments
     Post.remove().exec()
@@ -465,8 +466,11 @@ describe('Post all comments API', () => {
   });
 
   after(done => {
-    Post.remove().exec().then(done());
+    Post.remove().exec().then(() => done());
   });
+  after(done => {
+    User.remove().exec().then(() => done());
+  })
 
   it('should show all latest comments', done => {
     request(app)
@@ -482,6 +486,31 @@ describe('Post all comments API', () => {
       });
   });
 
-  it('should not show all latest comments for drafts when unauthorized');
+  it('should accept query parameters for all latest comments', done => {
+    request(app)
+      .get(`/api/posts/comments?limit=1&skip=1&sort=comments.date`)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end((err, res) => {
+        if (err) { return done(err); }
+        res.body.results.should.be.instanceof(Array);
+        res.body.results.length.should.be.eql(1);
+        res.body.total.should.be.eql(3);
+        expect(res.body.results[0].comments.body).to.contain('Second'); // test if the newest comment is on top
+        done();
+      });
+  });
 
+  it('should not show all latest comments for drafts when unauthorized', done => {
+    request(app)
+      .get(`/api/posts/comments?state=Draft`)
+      .expect(401, done);
+  });
+
+  it('should show all latest comments for drafts when authorized', done => {
+    request(app)
+      .get(`/api/posts/comments?state=Draft`)
+      .set('authorization', 'Bearer ' + userToken)
+      .expect(200, done);
+  });
 });

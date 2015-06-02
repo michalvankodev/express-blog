@@ -199,7 +199,8 @@ exports.getAllComments = function(req, res) {
 
   let defaultOptions = {
     limit: 10,
-    sort: '-comments.date'
+    sort: '-comments.date',
+    skip: 0
   };
 
   let conditions = QueryParser.getConditions(req.query, defaultConditions);
@@ -219,6 +220,7 @@ exports.getAllComments = function(req, res) {
       .match(conditions)
       .unwind('comments')
       .sort(options.sort)
+      .skip(parseInt(options.skip))
       .limit(parseInt(options.limit))
       .exec();
 
